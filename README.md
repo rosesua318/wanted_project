@@ -1,1 +1,1 @@
-# Wanted clone coing - RisingTest 8th / WantedA
+# 원티드 클론 코딩 - 라이징테스트 8th / 원티드 A
