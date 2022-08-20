@@ -9,12 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-
+public class PatchUserStatusReq {
 
     private int userIdx;
-    private String email;
-    private String password;
-    private String name;
-    private String phone;
+    private String status;
+
+
 }

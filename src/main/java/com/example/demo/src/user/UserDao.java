@@ -20,7 +20,7 @@ public class UserDao {
     }
 
     public List<GetUserRes> getUsers(){
-        String getUsersQuery = "select * from UserInfo";
+        String getUsersQuery = "select * from User";
         return this.jdbcTemplate.query(getUsersQuery,
                 (rs,rowNum) -> new GetUserRes(
                         rs.getInt("userIdx"),
@@ -45,22 +45,22 @@ public class UserDao {
     }
 
     public GetUserRes getUser(int userIdx){
-        String getUserQuery = "select * from UserInfo where userIdx = ?";
+        String getUserQuery = "select userIdx, name, img, email, phone from User where userIdx = ?";
         int getUserParams = userIdx;
         return this.jdbcTemplate.queryForObject(getUserQuery,
                 (rs, rowNum) -> new GetUserRes(
                         rs.getInt("userIdx"),
-                        rs.getString("userName"),
-                        rs.getString("ID"),
-                        rs.getString("Email"),
-                        rs.getString("password")),
+                        rs.getString("name"),
+                        rs.getString("img"),
+                        rs.getString("email"),
+                        rs.getString("phone")),
                 getUserParams);
     }
     
 
     public int createUser(PostUserReq postUserReq){
-        String createUserQuery = "insert into UserInfo (userName, ID, password, email) VALUES (?,?,?,?)";
-        Object[] createUserParams = new Object[]{postUserReq.getUserName(), postUserReq.getId(), postUserReq.getPassword(), postUserReq.getEmail()};
+        String createUserQuery = "insert into User (email, password, name,phone) VALUES (?,?,?,?)";
+        Object[] createUserParams = new Object[]{postUserReq.getEmail(), postUserReq.getPassword(), postUserReq.getName(), postUserReq.getPhone()};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
         String lastInserIdQuery = "select last_insert_id()";
@@ -68,7 +68,7 @@ public class UserDao {
     }
 
     public int checkEmail(String email){
-        String checkEmailQuery = "select exists(select email from UserInfo where email = ?)";
+        String checkEmailQuery = "select exists(select email from User where email = ?)";
         String checkEmailParams = email;
         return this.jdbcTemplate.queryForObject(checkEmailQuery,
                 int.class,
@@ -76,28 +76,36 @@ public class UserDao {
 
     }
 
-    public int modifyUserName(PatchUserReq patchUserReq){
-        String modifyUserNameQuery = "update UserInfo set userName = ? where userIdx = ? ";
-        Object[] modifyUserNameParams = new Object[]{patchUserReq.getUserName(), patchUserReq.getUserIdx()};
+    public int modifyUserInfo(PatchUserReq patchUserReq){
+        String modifyUserNameQuery = "update User set name = ?, email = ?, phone = ? where userIdx = ? "; // 쿼리 문 확인 필요
+        Object[] modifyUserNameParams = new Object[]{patchUserReq.getName(), patchUserReq.getEmail(),patchUserReq.getPhone(),patchUserReq.getUserIdx()};
 
         return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
     }
 
     public User getPwd(PostLoginReq postLoginReq){
-        String getPwdQuery = "select userIdx, password,email,userName,ID from UserInfo where ID = ?";
-        String getPwdParams = postLoginReq.getId();
+        String getPwdQuery = "select userIdx,email,password,name,phone from User where email = ?";
+        String getPwdParams = postLoginReq.getEmail();
 
         return this.jdbcTemplate.queryForObject(getPwdQuery,
                 (rs,rowNum)-> new User(
                         rs.getInt("userIdx"),
-                        rs.getString("ID"),
-                        rs.getString("userName"),
+                        rs.getString("email"),
                         rs.getString("password"),
-                        rs.getString("email")
+                        rs.getString("name"),
+                        rs.getString("phone")
                 ),
                 getPwdParams
                 );
 
+    }
+
+//상태변경
+    public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq){
+        String modifyStatusQuery = "UPDATE User set status = ? where userIdx = ?";
+        Object[] modifyStatusParams = new Object[]{patchUserStatusReq.getStatus(), patchUserStatusReq.getUserIdx()};
+
+        return this.jdbcTemplate.update(modifyStatusQuery,modifyStatusParams);
     }
 
 
