@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="8c70e825-129a-41d4-a424-c4b3aa4ecf05" name="RisingTest_prod" url="http://prod.severhwan.shop">
+        <fileTransfer rootFolder="/var/www/RisingTest" accessType="SFTP" host="13.124.75.220" port="22" sshConfigId="77e305d1-fb87-4e50-8072-68ff802c6234" sshConfig="ubuntu@13.124.75.220:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
