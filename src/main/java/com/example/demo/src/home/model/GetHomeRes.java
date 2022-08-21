@@ -11,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class GetHomeRes {
     private List<String> bannerList;
-    private List<String> categoryList;
+    private List<HomeCategory> categoryList;
     private List<Content> contents;
 }
