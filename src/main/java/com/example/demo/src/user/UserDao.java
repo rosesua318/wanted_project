@@ -105,12 +105,22 @@ public class UserDao {
 
 //상태변경
     public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq){
-        System.out.println("test - modifyUserStatus");
+
         String modifyStatusQuery = "UPDATE User set status = ? where userIdx = ?";
         Object[] modifyStatusParams = new Object[]{patchUserStatusReq.getStatus(), patchUserStatusReq.getUserIdx()};
 
         return this.jdbcTemplate.update(modifyStatusQuery,modifyStatusParams);
     }
 
+
+    // 비밀번호 변경
+
+    public int modifyPwd(PatchPwdReq patchPwdReq){
+
+        String modfiyPwdQuery = "UPDATE User set password = ? where userIdx = ?";
+        Object[] modifyPwdParams = new Object[]{patchPwdReq.getPassword(), patchPwdReq.getUserIdx()};
+
+        return this.jdbcTemplate.update(modfiyPwdQuery,modifyPwdParams);
+    }
 
 }

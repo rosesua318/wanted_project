@@ -82,4 +82,31 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public void modifyPwd(PatchPwdReq patchPwdReq) throws BaseException{
+
+        // 비밀번호 암호화
+        String pwd;
+        try{
+            //암호화
+            pwd = new SHA256().encrypt(patchPwdReq.getPassword());
+            patchPwdReq.setPassword(pwd);
+
+        } catch (Exception ignored) {
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+
+
+        try{
+
+
+            int result = userDao.modifyPwd(patchPwdReq);
+            if(result ==0){
+                throw new BaseException(MODIFY_FAIL_PWD);
+            }
+        }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 }

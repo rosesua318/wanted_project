@@ -70,4 +70,20 @@ public class JwtService {
         return claims.getBody().get("userIdx",Integer.class);
     }
 
+    // 토큰 유효성 검증
+    public void checkToken() throws  BaseException{
+
+        String accessToken = getJwt();
+        // 2. JWT parsing
+        Jws<Claims> claims;
+        try{
+            claims = Jwts.parser()
+                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .parseClaimsJws(accessToken);
+        } catch (Exception ignored) {
+            throw new BaseException(INVALID_JWT);
+        }
+    }
+
+
 }

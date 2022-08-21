@@ -50,12 +50,12 @@ public class UserController {
         // Get Users
         // 일단은 가장 기본적인 이름,이메일,전화번호만 조회하도록 함. 이후 이력서 등등.. 구현 예정
         try{
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             GetUserRes getUserRes = userProvider.getUser(userIdx);
             return new BaseResponse<>(getUserRes);
         } catch(BaseException exception){
@@ -146,12 +146,12 @@ public class UserController {
     @PatchMapping("/{userIdx}")
     public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user){
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
            // 변경 사항 : 이름, 이메일, 전화번호(현재 전화번호 인증하기 기능 제외)
             PatchUserReq patchUserReq = new PatchUserReq(user.getUserIdx(),user.getName(),user.getEmail(),user.getPhone());
             userService.modifyUserInfo(patchUserReq);
@@ -162,6 +162,33 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 비밀번호 변경
+     */
+    @ResponseBody
+    @PatchMapping("/pwd/{userIdx}") //
+    public BaseResponse<String> modifyUserStatus(@PathVariable("userIdx") int userIdx, @RequestBody PwdModify pwdModify){
+        try{
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }  // 이 부분까지는 유저가 사용하는 기능 중 유저에 대한 보안이 철저히 필요한 api 에서 사용
+
+            PatchPwdReq patchPwdReq = new PatchPwdReq(userIdx, pwdModify.getPassword());
+            userService.modifyPwd(patchPwdReq);
+
+            String result = "비밀번호 변경이 완료되었습니다.";
+            return new BaseResponse<>(result);
+
+        } catch (BaseException exception){
+            exception.printStackTrace();
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
 
     /**
