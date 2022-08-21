@@ -21,3 +21,4 @@
 
 ## 2022.08.22
 #### 1. 서브도메인 SSL 인증 문제 발생 -> nginx 설정에서 SSL 블록 추가해주어서 
+#### 2. CORS 문제 발생 -> CORS 방침 설정해줌 (WebMvcConfig.java) 
