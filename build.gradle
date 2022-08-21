@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:19.0.0'
+    implementation 'org.jetbrains:annotations:23.0.0'
 
 
     // Spring Boot Starter
@@ -38,7 +38,7 @@ dependencies {
     runtimeOnly ('mysql:mysql-connector-java') //mysql8
     //runtimeOnly 'mysql:mysql-connector-java:5.1.47' //mysql5
     implementation ('org.springframework.boot:spring-boot-starter-jdbc')
-    compile('org.springframework.boot:spring-boot-starter-data-jpa') //mysql 5버전의 경우 삭제.
+//    compile('org.springframework.boot:spring-boot-starter-data-jpa') //mysql 5버전의 경우 삭제.
 
 
 
@@ -47,17 +47,28 @@ dependencies {
 
     // Security, Authentication
     implementation('org.springframework.boot:spring-boot-starter-security')
-    compile(group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0')
-    compile('io.jsonwebtoken:jjwt:0.9.0')
+    // gradle 7.0 미만 버전을 쓴다면 아래 세개의 implementation을 compile로 설정하시면 됩니다!
+    implementation(group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1')
+    implementation('io.jsonwebtoken:jjwt:0.9.1')
+    implementation('org.springframework.boot:spring-boot-starter-web')
+
 
     implementation('org.springframework.boot:spring-boot-starter')
-    compile('org.springframework.boot:spring-boot-starter-web')
 
+    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 
+// https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
 
-
+// https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.1'
 
 }
+
+
+
+
 
 test {
     useJUnitPlatform()

@@ -45,11 +45,17 @@ public class UserController {
      **/
     // Path-variable
     @ResponseBody
-    @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/users/:userIdx
     public BaseResponse<GetUserRes> getUser(@PathVariable("userIdx") int userIdx) {
         // Get Users
         // 일단은 가장 기본적인 이름,이메일,전화번호만 조회하도록 함. 이후 이력서 등등.. 구현 예정
         try{
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
             GetUserRes getUserRes = userProvider.getUser(userIdx);
             return new BaseResponse<>(getUserRes);
         } catch(BaseException exception){
@@ -73,10 +79,6 @@ public class UserController {
         if(postUserReq.getEmail() == null){
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
-        //이메일 정규표현
-        if(!isRegexEmail(postUserReq.getEmail())){
-            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
-        }
 
         // 2. 아이디(로그인 아이디)
         if(postUserReq.getEmail() == null){
@@ -92,15 +94,15 @@ public class UserController {
         if(postUserReq.getPhone() == null){
             return new BaseResponse<>(POST_USERS_EMPTY_PHONE);
         }
-
+    //    (테스트시의 불편함으로 잠깐 해제)
         //이메일 정규표현
-        if(isRegexEmail(postUserReq.getEmail())){  // 정규표현식과 다른 형식으로 받으면 invalid (이메일 주소 형식)
-            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
-        }
+//        if(isRegexEmail(postUserReq.getEmail())){  // 정규표현식과 다른 형식으로 받으면 invalid (이메일 주소 형식)
+//            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+//        }
         //비밀번호 정규표현
-        if (isRegexPassword(postUserReq.getPassword())){  // 특수문자 / 문자 / 숫자 포함 형태의 8~20자리 이내의 암호 정규식
-            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
-        }
+//        if (isRegexPassword(postUserReq.getPassword())){  // 특수문자 / 문자 / 숫자 포함 형태의 8~20자리 이내의 암호 정규식
+//            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+//        }
         try{
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
@@ -117,6 +119,7 @@ public class UserController {
     @PostMapping("/login")
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
         try{
+
 
             // 기본 validation. 아이디(이메일) , 비밀번호를 입력하지 않은 경우
             if(postLoginReq.getEmail() == null){
@@ -143,13 +146,13 @@ public class UserController {
     @PatchMapping("/{userIdx}")
     public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user){
         try {
-            //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
-           // 변경 사항 : 이름, 이메일, 전화번호(현재 인증하기 기능 제외)
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
+           // 변경 사항 : 이름, 이메일, 전화번호(현재 전화번호 인증하기 기능 제외)
             PatchUserReq patchUserReq = new PatchUserReq(user.getUserIdx(),user.getName(),user.getEmail(),user.getPhone());
             userService.modifyUserInfo(patchUserReq);
 

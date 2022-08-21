@@ -32,26 +32,29 @@ public class UserDao {
     }
 
     public List<GetUserRes> getUsersByEmail(String email){
-        String getUsersByEmailQuery = "select * from UserInfo where email =?";
+        String getUsersByEmailQuery = "select * from User where email =?";
         String getUsersByEmailParams = email;
         return this.jdbcTemplate.query(getUsersByEmailQuery,
                 (rs, rowNum) -> new GetUserRes(
+
                         rs.getInt("userIdx"),
                         rs.getString("userName"),
                         rs.getString("ID"),
                         rs.getString("Email"),
                         rs.getString("password")),
+
                 getUsersByEmailParams);
     }
 
     public GetUserRes getUser(int userIdx){
-        String getUserQuery = "select userIdx, name, img, email, phone from User where userIdx = ?";
+        String getUserQuery = "select userIdx, name, imageUrl, email, phone from User where userIdx = ?";
         int getUserParams = userIdx;
+
         return this.jdbcTemplate.queryForObject(getUserQuery,
                 (rs, rowNum) -> new GetUserRes(
                         rs.getInt("userIdx"),
                         rs.getString("name"),
-                        rs.getString("img"),
+                        rs.getString("imageUrl"),
                         rs.getString("email"),
                         rs.getString("phone")),
                 getUserParams);
@@ -63,8 +66,8 @@ public class UserDao {
         Object[] createUserParams = new Object[]{postUserReq.getEmail(), postUserReq.getPassword(), postUserReq.getName(), postUserReq.getPhone()};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
-        String lastInserIdQuery = "select last_insert_id()";
-        return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+        String lastInsertIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
     }
 
     public int checkEmail(String email){
@@ -102,6 +105,7 @@ public class UserDao {
 
 //상태변경
     public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq){
+        System.out.println("test - modifyUserStatus");
         String modifyStatusQuery = "UPDATE User set status = ? where userIdx = ?";
         Object[] modifyStatusParams = new Object[]{patchUserStatusReq.getStatus(), patchUserStatusReq.getUserIdx()};
 
