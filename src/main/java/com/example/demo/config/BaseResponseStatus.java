@@ -85,6 +85,7 @@ public enum BaseResponseStatus {
     ;
 
 
+
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요
 

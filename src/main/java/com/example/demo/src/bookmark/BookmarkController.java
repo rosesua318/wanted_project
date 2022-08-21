@@ -79,7 +79,7 @@ public class BookmarkController {
     @GetMapping("/{userIdx}")
     public BaseResponse<List<GetEmploymentInfoRes>> getBookmarkList(@PathVariable("userIdx") int userIdx) throws BaseException {
         //  jwt에서 idx 추출.
-
+//
 //        int userIdxByJwt = jwtService.getUserIdx();
 //        //userIdx와 접근한 유저가 같은지 확인
 //        if (userIdx != userIdxByJwt) {

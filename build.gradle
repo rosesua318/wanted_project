@@ -64,6 +64,8 @@ dependencies {
 // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.1'
 
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
 }
 
 
