@@ -47,6 +47,8 @@ public enum BaseResponseStatus {
     POST_BOOKMARK_EXISTS_EMPLOYMENT(false,2031,"이미 북마크 된 채용 포지션 입니다."),
 
 
+    PATCH_LIKES_NO_DATA(false,2032,"좋아요가 되어있지 않습니다."),
+
     /**
      * 3000 : Response 오류
      */
@@ -75,6 +77,7 @@ public enum BaseResponseStatus {
 
     MODIFY_FAIL_PWD(false,4014,"비밀번호 변경에 실패하였습니다."),
 
+    MODIFY_FAIL_LIKES(false,4015,"좋아요 삭제에 실패하였습니다."),
 
     MODIFY_FAIL_BOOKMARK_STATUS(false,4030,"북마크 삭제에 실패하였습니다."),
 
