@@ -75,9 +75,9 @@ public enum BaseResponseStatus {
 
     MODIFY_FAIL_STATUS(false,4013,"회원 상태 변경에 실패하였습니다."),
 
-    MODIFY_FAIL_PWD(false,4014,"비밀번호 변경에 실패하였습니다."),
+    MODIFY_FAIL_LIKES(false,4014,"좋아요 상태 변경에 실패하였습니다."),
 
-    MODIFY_FAIL_LIKES(false,4015,"좋아요 삭제에 실패하였습니다."),
+    MODIFY_FAIL_PWD(false,4015,"비밀번호 변경에 실패하였습니다."),
 
     MODIFY_FAIL_BOOKMARK_STATUS(false,4030,"북마크 삭제에 실패하였습니다."),
 
