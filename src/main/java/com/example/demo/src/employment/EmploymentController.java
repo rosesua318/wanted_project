@@ -3,6 +3,7 @@ package com.example.demo.src.employment;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.employment.model.GetEmpDetailRes;
 import com.example.demo.src.employment.model.GetEmpHomeRes;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -71,5 +72,21 @@ public class EmploymentController {
 
     }
 
+    /**
+     * 채용 정보 조회(포지션)
+     */
+
+//    @ResponseBody
+//    @GetMapping("/{userIdx}/{employmentIdx}")
+//    public BaseResponse<GetEmpDetailRes> getEmpDetail(@PathVariable("userIdx") int userIdx, @PathVariable("employmendIdx") int employmentIdx) {
+//
+//        try{
+//            GetEmpDetailRes getEmpDetailRes = employmentProvider.getEmpDetail(userIdx,employmentIdx);
+//            return new BaseResponse<>(getEmpDetailRes);
+//        }catch(BaseException exception){
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//
+//    }
 
 }

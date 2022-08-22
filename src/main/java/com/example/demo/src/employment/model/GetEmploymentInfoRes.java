@@ -14,7 +14,8 @@ public class GetEmploymentInfoRes {
 
     private int employmentIdx;
 
-    private String employmentImg; // 채용 포지션 이미지
+ //   private EmploymentImg employmentImg; // 이미지
+    private String employmentImg;
     private String employment; // 채용 포지션 타이틀
     private String company; // 회사 명
     private String nation; // 국가 명
