@@ -1,4 +1,4 @@
-# <span style="color:yellow">원티드 클론 코딩 - 라이징테스트 8th  / 원티드 A - Server.</span>
+원티드 클론 코딩 - 라이징테스트 8th  / 원티드 A - Server
 
 #### [22/08/20 - 22/09/02] 2주간 진행
 
