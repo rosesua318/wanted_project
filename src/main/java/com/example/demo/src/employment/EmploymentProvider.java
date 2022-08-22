@@ -2,6 +2,7 @@ package com.example.demo.src.employment;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.src.bookmark.BookmarkDao;
+import com.example.demo.src.employment.model.GetEmpDetailRes;
 import com.example.demo.src.employment.model.GetEmpHomeRes;
 import com.example.demo.src.employment.model.GetEmploymentInfoRes;
 import com.example.demo.utils.JwtService;
@@ -62,4 +63,18 @@ public class EmploymentProvider {
         }
 
     }
+
+
+    // 채용 포지션 상세 페이지
+//
+//    public GetEmpDetailRes getEmpDetail(int userIdx, int employmentIdx) throws BaseException{
+//
+//        try{
+//            GetEmpDetailRes getEmpDetailRes = employmentDao.getEmpDetail(userIdx,employmentIdx);
+//            return getEmpDetailRes;
+//        }catch(Exception e){
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//
+//    }
 }

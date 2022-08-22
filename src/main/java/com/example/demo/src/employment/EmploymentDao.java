@@ -21,7 +21,7 @@ public class EmploymentDao {
     }
 
 
-    // 채용 포지션 조회(상세화면 x)
+    // 채용 포지션 조회(상세화면 x)(북마크조회관련)
     public List<GetEmploymentInfoRes> getEmploymentInfo (int userIdx){
 
 
@@ -140,4 +140,16 @@ public class EmploymentDao {
         return new GetEmpHomeRes(recommend,banners,employmentInfo,companyInfo);
     }
 
+
+//    public getEmpDetail(int userIdx, int employmentIdx){
+//
+//        String employmentImgQuery = "\n" +
+//                " SELECT Employment.employmentIdx,EmploymentImg.employmentImg FROM EmploymentImg\n" +
+//                "J OIN Employment ON EmploymentImg.employmentIdx = Employment.employmentIdx WHERE Employment.EmploymentIdx = ?;";
+//
+//        int getEmploymentImgParams = employmentIdx;
+//
+//
+//
+//    }
 }
