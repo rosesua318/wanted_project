@@ -1,11 +1,14 @@
 package com.example.demo.src.company;
 
 
+import com.example.demo.config.BaseException;
+import com.example.demo.config.BaseResponse;
+import com.example.demo.src.company.model.GetCompanyDetailRes;
+import com.example.demo.src.employment.model.GetEmpHomeRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/companies")
@@ -26,9 +29,44 @@ public class CompanyController {
         this.companyDao = companyDao;
     }
 
+    /*
+    회사 상세 페이지 조회(비회원용) -> 북마크.팔로우 여부 삭제, 연봉 직원 수 비공개
+     */
+    @ResponseBody
+    @GetMapping("/{companyIdx}")
+    public BaseResponse<GetCompanyDetailRes> getCompanyDetail(@PathVariable int companyIdx) throws BaseException{
+
+        try{
+
+            GetCompanyDetailRes getCompanyDetailRes = companyProvider.getCompanyDetail(companyIdx);
+
+            return new BaseResponse<>(getCompanyDetailRes);
+        }catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
 
 
 
+    /*
+    회사 상세 페이지 조회(회원용)
+     */
+
+    @ResponseBody
+    @GetMapping("/{userIdx}/{companyIdx}")
+    public BaseResponse<GetCompanyDetailRes> getCompanyDetail(@PathVariable("userIdx") int userIdx, @PathVariable int companyIdx) throws BaseException{
+
+        try{
+
+            GetCompanyDetailRes getCompanyDetailRes = companyProvider.getCompanyDetail(userIdx,companyIdx);
+
+            return new BaseResponse<>(getCompanyDetailRes);
+        }catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
 }
 
 
