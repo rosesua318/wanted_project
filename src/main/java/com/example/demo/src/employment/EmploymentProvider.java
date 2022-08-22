@@ -66,14 +66,14 @@ public class EmploymentProvider {
 
  //    채용 포지션 상세 페이지
 
-//    public GetEmpDetailRes getEmpDetail(int userIdx, int employmentIdx) throws BaseException{
-//
-//        try{
-//            GetEmpDetailRes getEmpDetailRes = employmentDao.getEmpDetail(userIdx,employmentIdx);
-//            return getEmpDetailRes;
-//        }catch(Exception e){
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//
-//    }
+    public GetEmpDetailRes getEmpDetail(int userIdx, int employmentIdx) throws BaseException{
+
+        try{
+            GetEmpDetailRes getEmpDetailRes = employmentDao.getEmpDetail(userIdx,employmentIdx);
+            return getEmpDetailRes;
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
 }

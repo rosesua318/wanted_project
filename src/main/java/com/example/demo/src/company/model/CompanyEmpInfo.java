@@ -12,6 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CompanyEmpInfo {
 
+    private int companyIdx;
+
     private String companyName;
 
     private String nation;

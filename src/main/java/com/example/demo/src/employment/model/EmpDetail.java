@@ -14,6 +14,7 @@ public class EmpDetail {
 
     // 이미지는 따로 뺌
 
+
     private String employment; // 채용 포지션 명
 
     private String introduce; // 소개 글
