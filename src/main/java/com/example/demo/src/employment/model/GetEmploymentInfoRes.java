@@ -12,6 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GetEmploymentInfoRes {
 
+    private int employmentIdx;
+
     private String employmentImg; // 채용 포지션 이미지
     private String employment; // 채용 포지션 타이틀
     private String company; // 회사 명

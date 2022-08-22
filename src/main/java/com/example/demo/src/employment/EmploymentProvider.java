@@ -2,6 +2,7 @@ package com.example.demo.src.employment;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.src.bookmark.BookmarkDao;
+import com.example.demo.src.employment.model.GetEmpHomeRes;
 import com.example.demo.src.employment.model.GetEmploymentInfoRes;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -33,6 +34,30 @@ public class EmploymentProvider {
             List<GetEmploymentInfoRes> getEmploymentInfoRes = employmentDao.getEmploymentInfo(userIdx);
             return getEmploymentInfoRes;
         } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
+
+    // 채용 홈 화면(비회원)
+
+    public GetEmpHomeRes getEmpHome() throws BaseException{
+        try{
+            GetEmpHomeRes getEmpHomeRes = employmentDao.getEmpHome();
+            return getEmpHomeRes;
+        }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
+    // 채용 홈 화면(회원)
+    public GetEmpHomeRes getEmpHome(int userIdx) throws BaseException{
+        try{
+            GetEmpHomeRes getEmpHomeRes = employmentDao.getEmpHome(userIdx);
+            return getEmpHomeRes;
+        }catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
 
