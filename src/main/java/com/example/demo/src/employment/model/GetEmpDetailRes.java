@@ -15,15 +15,15 @@ import java.util.List;
 @NoArgsConstructor
 public class GetEmpDetailRes {
 
-    private List<String> employmentImg;
+    private List<EmploymentImg> employmentImg;
 
     private CompanyEmpInfo companyEmpInfo;
 
-    private List<String> tag;
+    private List<Tag> tag;
 
     private EmpDetail empDetail;
 
-    private List<String> skill;
+    private List<Skill> skill;
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.demo.src.employment;
 
+import com.example.demo.src.company.model.CompanyEmpInfo;
 import com.example.demo.src.company.model.GetCompanyInfoRes;
 import com.example.demo.src.employment.model.*;
 
@@ -65,7 +66,7 @@ public class EmploymentDao {
 
     public GetEmpHomeRes getEmpHome() {
 
-        String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 0";
+        String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 1 LIMIT 5";
         List<EmpBanner> empBanners = this.jdbcTemplate.query(getBannerQuery,
                 (rs, rowNum) -> new EmpBanner(
                         rs.getInt("bannerIdx"),
@@ -146,7 +147,7 @@ public class EmploymentDao {
                 getRecommendParmas);
 
 
-        String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 0";
+        String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 1 LIMIT 5";
         List<EmpBanner> empBanners = this.jdbcTemplate.query(getBannerQuery,
                 (rs, rowNum) -> new EmpBanner(
                         rs.getInt("bannerIdx"),
@@ -210,15 +211,83 @@ public class EmploymentDao {
     }
 
 
-//    public getEmpDetail(int userIdx, int employmentIdx){
-//
-//        String employmentImgQuery = "\n" +
-//                " SELECT Employment.employmentIdx,EmploymentImg.employmentImg FROM EmploymentImg\n" +
-//                "J OIN Employment ON EmploymentImg.employmentIdx = Employment.employmentIdx WHERE Employment.EmploymentIdx = ?;";
-//
-//        int getEmploymentImgParams = employmentIdx;
-//
-//
-//
-//    }
+    public GetEmpDetailRes getEmpDetail(int userIdx, int employmentIdx){
+
+
+        // 1. EmploymentImg
+        String employmentImgQuery = "\n" +
+                " SELECT Employment.employmentIdx,EmploymentImg.EmploymentImgIdx,EmploymentImg.employmentImg FROM EmploymentImg"+
+        " JOIN Employment ON EmploymentImg.employmentIdx = Employment.employmentIdx WHERE Employment.EmploymentIdx = ?";
+
+        int getEmploymentParams = employmentIdx;
+
+        List<EmploymentImg> employmentImgList = this.jdbcTemplate.query(employmentImgQuery,
+                (rs,rowNum)-> new EmploymentImg(
+                        rs.getInt("employmentIdx"),
+                        rs.getInt("employmentImgIdx"),
+                        rs.getString("employmentImg")),
+                getEmploymentParams
+                );
+
+        // 2. CompanyEmpInfo
+        String companyInfoQuery = "\n" +
+                " SELECT Company.companyIdx,CompanyName, CONCAT(Region.name,'.',Nation.name) AS nation FROM Company " +
+        " JOIN Region " +
+        " JOIN Nation " +
+        " JOIN EmpRegion ON EmpRegion.nationIdx = Nation.nationIdx AND EmpRegion.regionIdx = Region.regionIdx " +
+        " JOIN Employment ON Employment.employmentIdx = EmpRegion.employmentIdx AND Company.companyIdx = Employment.companyIdx WHERE Employment.employmentIdx = ? ";
+
+        CompanyEmpInfo companyEmpInfo = this.jdbcTemplate.queryForObject(companyInfoQuery,
+                (rs,rowNum)-> new CompanyEmpInfo(
+                        rs.getInt("companyIdx"),
+                        rs.getString("CompanyName"),
+                        rs.getString("nation")),
+                getEmploymentParams
+                );
+
+        // 3. tag
+
+        String tagQuery = " SELECT Tag.tagIdx,tag FROM Tag " +
+        " JOIN CompanyTag AS CT " +
+        " JOIN Employment AS E ON CT.companyIdx = E.companyIdx AND CT.tagIdx = Tag.tagIdx " +
+        " JOIN Company AS C ON C.companyIdx = E.companyIdx AND CT.companyIdx = C.companyIdx WHERE E.employmentIdx = ? ";
+
+        List<Tag> tag = this.jdbcTemplate.query(tagQuery,
+                (rs,rowNum)-> new Tag(
+                        rs.getInt("tagIdx"),
+                        rs.getString("tag")),
+                getEmploymentParams
+                );
+
+        // 4. EmpDetail
+
+        String empDetailQuery = " SELECT employment, introduce, deadline, location,CONCAT(recommender,'원') AS recommender,CONCAT(applicant,'원') AS applicant FROM Employment WHERE employmentIdx = ? ";
+
+        EmpDetail empDetail = this.jdbcTemplate.queryForObject(empDetailQuery,
+                (rs,rowNum) -> new EmpDetail(
+                        rs.getString("employment"),
+                        rs.getString("introduce"),
+                        rs.getString("deadline"),
+                        rs.getString("location"),
+                        rs.getString("recommender"),
+                        rs.getString("applicant")),
+                getEmploymentParams
+                );
+
+        // 5. Skill
+
+        String skillQuery = "SELECT S.skillIdx, S.name AS skill FROM Skill AS S\n" +
+                "JOIN EmpSkill AS ES ON S.skillIdx = ES.skillIdx\n" +
+                "JOIN Employment AS E ON E.employmentIdx = ES.employmentIdx WHERE ES.employmentIdx = ?";
+
+        List<Skill> skill = this.jdbcTemplate.query(skillQuery,
+                (rs,rowNum)-> new Skill(
+                        rs.getInt("skillIdx"),
+                        rs.getString("skill")),
+                getEmploymentParams
+                );
+
+        return new GetEmpDetailRes(employmentImgList,companyEmpInfo,tag,empDetail,skill);
+
+    }
 }

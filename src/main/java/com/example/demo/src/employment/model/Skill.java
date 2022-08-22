@@ -10,10 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmploymentImg {
+public class Skill {
 
-    private int employmentIdx;
-    private int employmentImgIdx;
+    private int skillIdx;
 
-    private String employmentImg;
+    private String skill;
 }
