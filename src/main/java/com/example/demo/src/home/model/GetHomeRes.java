@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class GetHomeRes {
-    private List<String> bannerList;
+    private List<Banner> bannerList;
     private List<HomeCategory> categoryList;
     private List<Content> contents;
 }

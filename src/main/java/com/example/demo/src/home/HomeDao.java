@@ -1,5 +1,6 @@
 package com.example.demo.src.home;
 
+import com.example.demo.src.home.model.Banner;
 import com.example.demo.src.home.model.Content;
 import com.example.demo.src.home.model.GetHomeRes;
 import com.example.demo.src.home.model.HomeCategory;
@@ -20,9 +21,10 @@ public class HomeDao {
     }
 
     public GetHomeRes getHome(int homecategoryIdx) {
-        String getBannerQuery = "select imageUrl from Banner where type = 0";
-        List<String> banners = this.jdbcTemplate.query(getBannerQuery,
-                (rs, rowNum) -> new String(
+        String getBannerQuery = "select bannerIdx, imageUrl from Banner where type = 0";
+        List<Banner> banners = this.jdbcTemplate.query(getBannerQuery,
+                (rs, rowNum) -> new Banner(
+                        rs.getInt("bannerIdx"),
                         rs.getString("imageUrl")));
 
         String getCategoryQuery = "select homecategoryIdx, homecategory from HomeCategory";
