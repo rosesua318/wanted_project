@@ -20,11 +20,20 @@ public class PositionProvider {
     }
 
     public GetOpenPositionRes getPositionOpen(int jobIdx, int dutyIdx) throws BaseException {
-        //try {
+        try {
             GetOpenPositionRes getOpenPositionRes = positionDao.getPositionOpen(jobIdx, dutyIdx);
             return getOpenPositionRes;
-       // } catch (Exception exception) {
-       //     throw new BaseException(DATABASE_ERROR);
-       // }
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetOpenPositionRes getPosition(int userIdx, int jobIdx, int dutyIdx) throws BaseException {
+        try {
+            GetOpenPositionRes getOpenPositionRes = positionDao.getPosition(userIdx, jobIdx, dutyIdx);
+            return getOpenPositionRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 }

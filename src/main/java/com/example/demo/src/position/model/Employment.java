@@ -24,4 +24,13 @@ public class Employment {
         this.region = region;
         this.nation = nation;
     }
+
+    public Employment(int employmentIdx, String title, String companyName, String region, String nation, int isBookmark) {
+        this.employmentIdx = employmentIdx;
+        this.title = title;
+        this.companyName = companyName;
+        this.region = region;
+        this.nation = nation;
+        this.isBookmark = isBookmark;
+    }
 }
