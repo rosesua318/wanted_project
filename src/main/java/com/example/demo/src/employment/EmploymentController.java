@@ -71,11 +71,11 @@ public class EmploymentController {
         }
 
     }
-
-    /**
-     * 채용 정보 조회(포지션)
-     */
-
+//
+//    /**
+//     * 채용 정보 조회(포지션)
+//     */
+//
 //    @ResponseBody
 //    @GetMapping("/{userIdx}/{employmentIdx}")
 //    public BaseResponse<GetEmpDetailRes> getEmpDetail(@PathVariable("userIdx") int userIdx, @PathVariable("employmendIdx") int employmentIdx) {

@@ -4,7 +4,6 @@ import com.example.demo.config.BaseException;
 import com.example.demo.src.bookmark.model.GetBookmarkEmpIdRes;
 import com.example.demo.src.bookmark.model.PatchBookmarkStatusReq;
 import com.example.demo.src.bookmark.model.PostBookMarkReq;
-import com.example.demo.src.employment.model.GetEmploymentInfoRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

@@ -12,10 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 import static com.example.demo.config.BaseResponseStatus.POST_BOOKMARK_CREATE_FAIL;
 
 @RestController
@@ -89,7 +87,6 @@ public class BookmarkController {
         try {
 
             List<GetEmploymentInfoRes> employmentInfo = employmentProvider.getEmploymentInfoList(userIdx);
-
             return new BaseResponse<>(employmentInfo);
 
         } catch (BaseException exception) {

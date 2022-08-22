@@ -41,10 +41,13 @@ public enum BaseResponseStatus {
     POST_USERS_INVALID_PASSWORD(false,2022,"비밀번호는 특수문자,문자,숫자 포함 8~20자리만 가능합니다."),
 
 
+
+
     // [POST] / bookmark
     POST_BOOKMARK_CREATE_FAIL(false,2030,"북마크 할 채용 포지션을 선택해주세요."),
 
     POST_BOOKMARK_EXISTS_EMPLOYMENT(false,2031,"이미 북마크 된 채용 포지션 입니다."),
+
 
 
     PATCH_LIKES_NO_DATA(false,2032,"좋아요가 되어있지 않습니다."),

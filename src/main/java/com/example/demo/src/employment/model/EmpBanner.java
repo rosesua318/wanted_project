@@ -10,11 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmploymentImg {
+public class EmpBanner {
 
-    private int employmentImgIdx;
+    private int bannerIdx;
 
-    private int employmentIdx;
-
-    private String employmentImg;
+    private String imageUrl;
 }

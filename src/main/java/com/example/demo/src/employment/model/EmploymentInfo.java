@@ -10,11 +10,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmploymentImg {
-
-    private int employmentImgIdx;
+public class EmploymentInfo {
 
     private int employmentIdx;
-
-    private String employmentImg;
+    private String employment; // 채용 포지션 타이틀
+    private String company; // 회사 명
+    private String nation; // 국가 명
+    private String compensation; // 채용보상금
 }

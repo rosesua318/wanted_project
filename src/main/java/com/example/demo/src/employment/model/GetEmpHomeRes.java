@@ -17,7 +17,7 @@ public class GetEmpHomeRes {
 
     private String recommend; // 회원일시 추천멘트
 
-    private List<String> bannerUrl; // 슬라이드 배너 Url
+    private List<EmpBanner> empBannerUrl; // 슬라이드 배너 Url
 
     private List<GetEmploymentInfoRes> getEmploymentInfoResList;
 
