@@ -65,7 +65,7 @@ public class EmploymentDao {
 
     public GetEmpHomeRes getEmpHome() {
 
-        String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 0";
+        String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 1";
         List<EmpBanner> empBanners = this.jdbcTemplate.query(getBannerQuery,
                 (rs, rowNum) -> new EmpBanner(
                         rs.getInt("bannerIdx"),
@@ -146,7 +146,7 @@ public class EmploymentDao {
                 getRecommendParmas);
 
 
-        String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 0";
+        String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 1";
         List<EmpBanner> empBanners = this.jdbcTemplate.query(getBannerQuery,
                 (rs, rowNum) -> new EmpBanner(
                         rs.getInt("bannerIdx"),
@@ -214,7 +214,7 @@ public class EmploymentDao {
 //
 //        String employmentImgQuery = "\n" +
 //                " SELECT Employment.employmentIdx,EmploymentImg.employmentImg FROM EmploymentImg\n" +
-//                "J OIN Employment ON EmploymentImg.employmentIdx = Employment.employmentIdx WHERE Employment.EmploymentIdx = ?;";
+//                " JOIN Employment ON EmploymentImg.employmentIdx = Employment.employmentIdx WHERE Employment.EmploymentIdx = ?";
 //
 //        int getEmploymentImgParams = employmentIdx;
 //
