@@ -2,6 +2,7 @@ package com.example.demo.src.search;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.search.model.GetCompanyTagHomeRes;
 import com.example.demo.src.search.model.PostSearchTagReq;
 import com.example.demo.src.search.model.PostSearchTagRes;
 import com.example.demo.src.search.model.SearchTag;
@@ -116,6 +117,43 @@ public class SearchController {
             }
             PostSearchTagRes postSearchTags = searchProvider.searchClick(tagIdx, userIdx);
             return new BaseResponse<>(postSearchTags);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 기업 태그 홈 조회 (비회원용) API
+     * [GET] /tags/home
+     *@returnBaseResponse<GetCompanyTagHomeRes>
+     */
+    @ResponseBody
+    @GetMapping("/tags/home")
+    public BaseResponse<GetCompanyTagHomeRes> getCompanyTagHomeOpen() throws BaseException {
+        try {
+            GetCompanyTagHomeRes getCompanyTagHomeRes = searchProvider.getCompanyTagHomeOpen();
+            return new BaseResponse<>(getCompanyTagHomeRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 기업 태그 홈 조회 (회원용) API
+     * [GET] /tags/home/:userIdx
+     *@returnBaseResponse<GetCompanyTagHomeRes>
+     */
+    @ResponseBody
+    @GetMapping("/tags/home/{userIdx}")
+    public BaseResponse<GetCompanyTagHomeRes> getCompanyTagHome(@PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            int userIdxByJwt = jwtService.getUserIdx();
+
+            if(userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetCompanyTagHomeRes getCompanyTagHomeRes = searchProvider.getCompanyTagHome(userIdx);
+            return new BaseResponse<>(getCompanyTagHomeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
