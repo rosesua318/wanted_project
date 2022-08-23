@@ -2,10 +2,7 @@ package com.example.demo.src.search;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.search.model.GetCompanyTagHomeRes;
-import com.example.demo.src.search.model.PostSearchTagReq;
-import com.example.demo.src.search.model.PostSearchTagRes;
-import com.example.demo.src.search.model.SearchTag;
+import com.example.demo.src.search.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
+import static com.example.demo.config.BaseResponseStatus.PATCH_SEARCH_RECORDS_NO_DATA;
 
 @RestController
 @RequestMapping("/searches")
@@ -80,6 +78,90 @@ public class SearchController {
         try {
             List<SearchTag> recommTags = searchProvider.getRecommTag();
             return new BaseResponse<>(recommTags);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
+    /**
+     * 검색 기록, 추천 태그 조회(회원용) API
+     * [GET] /searches/:userIdx
+     *@returnBaseResponse<List<SearchTag>>
+     */
+    @ResponseBody
+    @GetMapping("/{userIdx}")
+    public BaseResponse<GetSearchRes> getSearchRes(@PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            int userIdxByJwt = jwtService.getUserIdx();
+
+            if(userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetSearchRes getSearchRes = searchProvider.getSearchRes(userIdx);
+            return new BaseResponse<>(getSearchRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 검색 기록 삭제 API
+     * [PATCH] /searches/:userIdx
+     *@returnBaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/{userIdx}")
+    public BaseResponse<String> deleteSearchRecords(@PathVariable("userIdx") int userIdx, @RequestBody PatchRecordReq patchRecordReq) throws BaseException {
+        try {
+            int userIdxByJwt = jwtService.getUserIdx();
+
+            if(userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            if(searchProvider.checkSearchRecords(userIdx, patchRecordReq.getSearchIdx()) != 0) {
+                searchService.deleteSearchRecords(userIdx, patchRecordReq.getSearchIdx());
+                return new BaseResponse<>("삭제되었습니다.");
+            } else {
+                return new BaseResponse<>(PATCH_SEARCH_RECORDS_NO_DATA);
+            }
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 태그 외 검색(비회원용) API
+     * [POST] /searches
+     *@returnBaseResponse<PostSearchRes>
+     */
+    @ResponseBody
+    @PostMapping()
+    public BaseResponse<PostSearchRes> searchKeywordOpen(@RequestBody PostSearchReq postSearchReq) throws BaseException {
+        try {
+            PostSearchRes postSearchRes = searchService.searchKeywordOpen(postSearchReq);
+            return new BaseResponse<>(postSearchRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 태그 외 검색(회원용) API
+     * [POST] /searches/:userIdx
+     *@returnBaseResponse<PostSearchRes>
+     */
+    @ResponseBody
+    @PostMapping("/{userIdx}")
+    public BaseResponse<PostSearchRes> searchKeyword(@PathVariable("userIdx") int userIdx, @RequestBody PostSearchReq postSearchReq) throws BaseException {
+        try {
+            if(searchProvider.checkSearchRecordKeyword(userIdx, postSearchReq.getKeyword()) != 0) {
+                searchService.modifySearchRecord(userIdx, postSearchReq.getKeyword());
+            } else {
+                searchService.createSearchRecord(userIdx, postSearchReq.getKeyword());
+            }
+            PostSearchRes postSearchRes = searchService.searchKeyword(userIdx, postSearchReq);
+            return new BaseResponse<>(postSearchRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
