@@ -85,6 +85,8 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_BOOKMARK_STATUS(false,4030,"북마크 삭제에 실패하였습니다."),
 
 
+    SEARCH_TAG_NO_DATA(false, 4100, "존재하지 않는 태그입니다."),
+
     ;
 
 
