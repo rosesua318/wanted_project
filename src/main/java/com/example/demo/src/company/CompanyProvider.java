@@ -2,7 +2,9 @@ package com.example.demo.src.company;
 
 
 import com.example.demo.config.BaseException;
+import com.example.demo.config.BaseResponse;
 import com.example.demo.src.company.model.GetCompanyDetailRes;
+import com.example.demo.src.company.model.GetCompanyNewsRes;
 import com.example.demo.src.employment.model.GetEmpDetailRes;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -29,12 +31,12 @@ public class CompanyProvider {
     }
 
     /* 회사 상세 페이지 조회(비회원용) */
-    public GetCompanyDetailRes getCompanyDetail(int companyIdx) throws BaseException{
+    public GetCompanyDetailRes getCompanyDetail(int companyIdx) throws BaseException {
 
-        try{
+        try {
             GetCompanyDetailRes getCompanyDetailRes = companyDao.getCompanyDetail(companyIdx);
             return getCompanyDetailRes;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -45,13 +47,25 @@ public class CompanyProvider {
     회사 상사 페이지 조회(회원용)
      */
 
-    public GetCompanyDetailRes getCompanyDetail(int userIdx, int companyIdx) throws BaseException{
+    public GetCompanyDetailRes getCompanyDetail(int userIdx, int companyIdx) throws BaseException {
 
-        try{
-            GetCompanyDetailRes getCompanyDetailRes = companyDao.getCompanyDetail(userIdx,companyIdx);
+        try {
+            GetCompanyDetailRes getCompanyDetailRes = companyDao.getCompanyDetail(userIdx, companyIdx);
             return getCompanyDetailRes;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /* 회사 뉴스 조회 */
+
+    public GetCompanyNewsRes getCompanyNews(int companyIdx, int newsIdx) throws BaseException{
+        try{
+            GetCompanyNewsRes getCompanyNewsRes = companyDao.getCompanyNews(companyIdx,newsIdx);
+            return getCompanyNewsRes;
         }catch(Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
 }

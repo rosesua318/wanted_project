@@ -4,6 +4,7 @@ package com.example.demo.src.company;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.company.model.GetCompanyDetailRes;
+import com.example.demo.src.company.model.GetCompanyNewsRes;
 import com.example.demo.src.employment.model.GetEmpHomeRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +56,31 @@ public class CompanyController {
 
     @ResponseBody
     @GetMapping("/{userIdx}/{companyIdx}")
-    public BaseResponse<GetCompanyDetailRes> getCompanyDetail(@PathVariable("userIdx") int userIdx, @PathVariable int companyIdx) throws BaseException{
+    public BaseResponse<GetCompanyDetailRes> getCompanyDetail(@PathVariable("userIdx") int userIdx, @PathVariable("companyIdx") int companyIdx) throws BaseException{
 
         try{
 
             GetCompanyDetailRes getCompanyDetailRes = companyProvider.getCompanyDetail(userIdx,companyIdx);
 
             return new BaseResponse<>(getCompanyDetailRes);
+        }catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
+
+    /* 회사 뉴스 조회 */
+
+    @ResponseBody
+    @GetMapping("/news/{companyIdx}/{newsIdx}")
+    public BaseResponse<GetCompanyNewsRes> getCompanyNews(@PathVariable("companyIdx") int companyIdx, @PathVariable("newsIdx") int newsIdx) throws BaseException{
+
+        try{
+
+            GetCompanyNewsRes getCompanyNewsRes = companyProvider.getCompanyNews(companyIdx,newsIdx);
+
+            return new BaseResponse<>(getCompanyNewsRes);
         }catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
