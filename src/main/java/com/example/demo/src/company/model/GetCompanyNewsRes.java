@@ -6,21 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyNews {
+public class GetCompanyNewsRes {
 
-    // 1. 뉴스 idx
     private int newsIdx;
 
-    // 2. 뉴스 명
-    private String newsTitle;
-
-    // 3. 뉴스 생성 날짜
-
-    private String createdAt;
-
-
+    private String newsUrl;
 }

@@ -155,4 +155,21 @@ public class CompanyDao {
 
         return new GetCompanyDetailRes(companyBasic,companyEmpList,companyImgList,companyNewsList,tagList);
     }
+
+    /* 회사 뉴스 조회 */
+
+    public GetCompanyNewsRes getCompanyNews(int companyIdx, int newsIdx){
+
+        String getCompanyNewsQuery = "SELECT CN.CompanyNewsId,NewsUrl FROM CompanyNews AS CN WHERE companyIdx =? AND CompanyNewsId =?";
+
+        Object[] getCompanyNewsParams = new Object[]{companyIdx,newsIdx};
+
+        GetCompanyNewsRes getCompanyNewsRes = this.jdbcTemplate.queryForObject(getCompanyNewsQuery,
+                (rs,rowNum)-> new GetCompanyNewsRes(
+                        rs.getInt("CompanyNewsId"),
+                        rs.getString("NewsUrl")),
+                getCompanyNewsParams);
+
+        return getCompanyNewsRes;
+    }
 }

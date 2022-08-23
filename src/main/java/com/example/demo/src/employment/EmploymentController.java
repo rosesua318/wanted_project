@@ -78,7 +78,7 @@ public class EmploymentController {
 
     @ResponseBody
     @GetMapping("/{userIdx}/{employmentIdx}")
-    public BaseResponse<GetEmpDetailRes> getEmpDetail(@PathVariable("userIdx") int userIdx, @PathVariable int employmentIdx) {
+    public BaseResponse<GetEmpDetailRes> getEmpDetail(@PathVariable("userIdx") int userIdx, @PathVariable("employmentIdx") int employmentIdx) {
 
         try{
             GetEmpDetailRes getEmpDetailRes = employmentProvider.getEmpDetail(userIdx,employmentIdx);
