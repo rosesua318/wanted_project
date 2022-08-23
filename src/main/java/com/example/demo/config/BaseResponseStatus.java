@@ -52,6 +52,8 @@ public enum BaseResponseStatus {
 
     PATCH_LIKES_NO_DATA(false,2032,"좋아요가 되어있지 않습니다."),
 
+    PATCH_SEARCH_RECORDS_NO_DATA(false, 2100, "없는 검색 기록을 삭제하려고 합니다."),
+
     /**
      * 3000 : Response 오류
      */

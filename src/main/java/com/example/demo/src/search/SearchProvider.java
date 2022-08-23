@@ -2,6 +2,7 @@ package com.example.demo.src.search;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.src.search.model.GetCompanyTagHomeRes;
+import com.example.demo.src.search.model.GetSearchRes;
 import com.example.demo.src.search.model.PostSearchTagRes;
 import com.example.demo.src.search.model.SearchTag;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,33 @@ public class SearchProvider {
         this.searchDao = searchDao;
     }
 
+    public int checkSearchRecords(int userIdx, int searchIdx) throws BaseException{
+        try{
+            return searchDao.checkSearchRecords(userIdx, searchIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkSearchRecordKeyword(int userIdx, String keyword) throws BaseException{
+        try{
+            return searchDao.checkSearchRecordKeyword(userIdx, keyword);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public List<SearchTag> getRecommTag() throws BaseException {
         try {
             return searchDao.getRecommTag();
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetSearchRes getSearchRes(int userIdx) throws BaseException {
+        try {
+            return searchDao.getSearchRes(userIdx);
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
