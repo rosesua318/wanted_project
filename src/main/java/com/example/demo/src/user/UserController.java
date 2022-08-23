@@ -9,12 +9,9 @@ import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 
 import static com.example.demo.config.BaseResponseStatus.*;
-import static com.example.demo.utils.ValidationRegex.isRegexEmail;
-import static com.example.demo.utils.ValidationRegex.isRegexPassword;
+
 
 @RestController
 @RequestMapping("/users")
@@ -29,8 +26,6 @@ public class UserController {
     private final JwtService jwtService;
 
 
-
-
     public UserController(UserProvider userProvider, UserService userService, JwtService jwtService){
         this.userProvider = userProvider;
         this.userService = userService;
@@ -40,8 +35,8 @@ public class UserController {
     /**
      * 회원 프로필 조회
      *
-     * @param userIdx
-     * @return
+     *
+     *
      **/
     // Path-variable
     @ResponseBody
@@ -136,6 +131,28 @@ public class UserController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 로그인 API - 이메일 확인
+     */
+
+    @ResponseBody
+    @PostMapping("/login/email")
+    public BaseResponse<String> logInEmail(@RequestBody PostLoginEmailReq postLoginEmailReq){
+        String email = postLoginEmailReq.getEmail();
+        try{
+            if(email == null){
+                return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+            }
+            String result = userService.checkEmail(email);
+            return new BaseResponse<String>(result);
+
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
 
     /**
      * 유저정보변경 API

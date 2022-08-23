@@ -86,6 +86,23 @@ public class UserDao {
         return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
     }
 
+//    public User getPwd(PostLoginReq postLoginReq){
+//        String getPwdQuery = "select userIdx,email,password,name,phone from User where email = ?";
+//        String getPwdParams = postLoginReq.getEmail();
+//
+//        return this.jdbcTemplate.queryForObject(getPwdQuery,
+//                (rs,rowNum)-> new User(
+//                        rs.getInt("userIdx"),
+//                        rs.getString("email"),
+//                        rs.getString("password"),
+//                        rs.getString("name"),
+//                        rs.getString("phone")
+//                ),
+//                getPwdParams
+//                );
+//
+//    }
+
     public User getPwd(PostLoginReq postLoginReq){
         String getPwdQuery = "select userIdx,email,password,name,phone from User where email = ?";
         String getPwdParams = postLoginReq.getEmail();
@@ -99,7 +116,7 @@ public class UserDao {
                         rs.getString("phone")
                 ),
                 getPwdParams
-                );
+        );
 
     }
 

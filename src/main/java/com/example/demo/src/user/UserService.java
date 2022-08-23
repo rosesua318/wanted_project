@@ -31,6 +31,19 @@ public class UserService {
 
     }
 
+    // 유저 로그인 - 이메일 체크
+
+    public String checkEmail(String email) throws BaseException {
+        String result;
+        if(userProvider.checkEmail(email) == 0){
+            result = "회원가입부터 진행해야 합니다.";
+        }
+        else
+            result = "비밀번호 입력";
+        return result;
+
+    }
+
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
         //중복
