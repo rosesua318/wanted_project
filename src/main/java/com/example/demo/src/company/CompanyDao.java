@@ -93,7 +93,7 @@ public class CompanyDao {
 
         // 1. CompanyBasic
         String getCompanyBasicQuery = "SELECT logoUrl,companyName,salary,employee,\n" +
-                "CASE WHEN(SELECT Follow.followIdx FROM Follow WHERE Follow.userIdx = ? AND Follow.companyIdx = Company.companyIdx) IS NOT NULL THEN 1 ELSE 0 END AS isFollow FROM Company WHERE Company.companyIdx = ?;";
+                "CASE WHEN(SELECT Follow.followIdx FROM Follow WHERE Follow.userIdx = ? AND Follow.companyIdx = Company.companyIdx AND status = 'ACTIVE' LIMIT 1) IS NOT NULL THEN 1 ELSE 0 END AS isFollow FROM Company WHERE Company.companyIdx = ?;";
 
         Object[] getCompanyDetailParams = new Object[]{userIdx,companyIdx};
 
