@@ -232,4 +232,71 @@ public class PositionDao {
 
         return new GetOpenPositionRes(jobCategory, dutyCategory, empRegion, "전체", searchCategories, companies, employments);
     }
+
+    public List<JobCategory> getJobCategory() {
+        String getJobCategory = "select categoryIdx, category from EmploymentCategory";
+        List<JobCategory> jobCategories = this.jdbcTemplate.query(getJobCategory,
+                (rs, rowNum) -> new JobCategory(
+                        rs.getInt("categoryIdx"),
+                        rs.getString("category")));
+
+        return jobCategories;
+    }
+
+    public List<DutyCategory> getDutyCategory(int jobIdx) {
+        String getDutyCategory = "select subcategoryIdx, subcategory from EmploymentSubCategory where categoryIdx=?";
+        String getDutyParams = String.valueOf(jobIdx);
+        List<DutyCategory> dutyCategories = this.jdbcTemplate.query(getDutyCategory,
+                (rs, rowNum) -> new DutyCategory(
+                        rs.getInt("subcategoryIdx"),
+                        rs.getString("subcategory")),
+                getDutyParams);
+
+        return dutyCategories;
+    }
+
+    public List<Nation> getNations() {
+        String getNationQuery = "select nationIdx, name from Nation";
+        List<Nation> nations = this.jdbcTemplate.query(getNationQuery,
+                (rs, rowNum) -> new Nation(
+                        rs.getInt("nationIdx"),
+                        rs.getString("name")));
+
+        return nations;
+    }
+
+    public List<Region> getRegions(int nationIdx) {
+        String getRegionQuery = "select regionIdx, name from Region where nationIdx=?";
+        String getRegionParams = String.valueOf(nationIdx);
+        List<Region> regions = this.jdbcTemplate.query(getRegionQuery,
+                (rs, rowNum) -> new Region(
+                        rs.getInt("regionIdx"),
+                        rs.getString("name")),
+                getRegionParams);
+
+        return regions;
+    }
+
+    public List<DetailRegion> getDetailRegions(int regionIdx) {
+        String getDetailRegionQuery = "select drIdx, name from DetailRegion where regionIdx=?";
+        String getDetailRegionParams = String.valueOf(regionIdx);
+        List<DetailRegion> detailRegions = this.jdbcTemplate.query(getDetailRegionQuery,
+                (rs, rowNum) -> new DetailRegion(
+                        rs.getInt("drIdx"),
+                        rs.getString("name")),
+                getDetailRegionParams);
+
+        return detailRegions;
+    }
+
+    public List<EmpStack> getStacks() {
+        String getStackQuery = "select skillIdx, name from Skill";
+        List<EmpStack> stacks = this.jdbcTemplate.query(getStackQuery,
+                (rs, rowNum) -> new EmpStack(
+                        rs.getInt("skillIdx"),
+                        rs.getString("name")));
+
+        return stacks;
+    }
+
 }
