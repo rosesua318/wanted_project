@@ -159,7 +159,7 @@ public class UserController {
             String result = "회원 정보 수정 완료되었습니다.";
         return new BaseResponse<>(result);
         } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
+            return new BaseResponse<>(exception.getStatus());
         }
     }
 

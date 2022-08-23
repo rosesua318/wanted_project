@@ -47,10 +47,13 @@ public enum BaseResponseStatus {
     POST_BOOKMARK_CREATE_FAIL(false,2030,"북마크 할 채용 포지션을 선택해주세요."),
 
     POST_BOOKMARK_EXISTS_EMPLOYMENT(false,2031,"이미 북마크 된 채용 포지션 입니다."),
-
-
+    // POST / FOLLOW
 
     PATCH_LIKES_NO_DATA(false,2032,"좋아요가 되어있지 않습니다."),
+
+    POST_FOLLOW_EXISTS(false,2033,"이미 팔로우된 회사입니다."),
+
+    PATCH_FOLLOW_NO_DATA(false,2034,"팔로우가 되어있지 않은 상태입니다."),
 
     PATCH_SEARCH_RECORDS_NO_DATA(false, 2100, "없는 검색 기록을 삭제하려고 합니다."),
 
