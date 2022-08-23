@@ -1,6 +1,7 @@
 package com.example.demo.src.search;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.search.model.GetCompanyTagHomeRes;
 import com.example.demo.src.search.model.PostSearchTagRes;
 import com.example.demo.src.search.model.SearchTag;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,22 @@ public class SearchProvider {
     public PostSearchTagRes searchClick(int tagIdx, int userIdx) throws BaseException {
         try {
             return searchDao.searchClick(tagIdx, userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetCompanyTagHomeRes getCompanyTagHomeOpen() throws BaseException {
+        try {
+            return searchDao.getCompanyTagHomeOpen();
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetCompanyTagHomeRes getCompanyTagHome(int userIdx) throws BaseException {
+        try {
+            return searchDao.getCompanyTagHome(userIdx);
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
