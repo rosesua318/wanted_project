@@ -76,7 +76,7 @@ public class PointDao {
                         rs.getString("month")));
 
         for(MonthPoint m : months) {
-            String getRecordQuery = "select p.pointIdx, date_format(p.createdAt, '%m.%d') date, p.title, p.isPlus, p.cost, date_format(p.endAt, '%y.%m.%d') endAt " +
+            String getRecordQuery = "select p.pointIdx, date_format(p.createdAt, '%m.%d') date, p.title, p.isPlus, p.cost, date_format(p.endAt, '%Y.%m.%d') endAt " +
                     "from Point p where date_format(p.createdAt, '%Y.%m') LIKE ?";
             String getRecordParams = m.getMonth();
             List<PointRecord> pointList = this.jdbcTemplate.query(getRecordQuery,
