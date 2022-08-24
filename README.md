@@ -66,3 +66,7 @@
 #### 9. 태그 외 검색 회원/비회원용 API 완성
 #### 10. 검색 기록 & 추천 태그 조회 회원용 API 완성
 #### 11. 검색 기록 삭제 API 
+
+## 2022.08.24
+#### 1. 테이블 생성 InterestTag(관심태그 대분류), InterestClassitifcation(관심태그 분류), UserInterestTag(사용자 관심태그 설정), Specialty(전문 분야 설정), SpecialtySkill(전문 분야 스킬 설정)
+#### 2. My 원티드 조회 API 
