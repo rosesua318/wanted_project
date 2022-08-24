@@ -1,6 +1,7 @@
 package com.example.demo.src.wanted;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.wanted.model.GetInterestTagRes;
 import com.example.demo.src.wanted.model.GetWantedRes;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,14 @@ public class WantedProvider {
     public GetWantedRes getWanted(int userIdx) throws BaseException {
         try {
             return wantedDao.getWanted(userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetInterestTagRes getInterestTag(int userIdx)throws BaseException {
+        try {
+            return wantedDao.getInterestTag(userIdx);
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }

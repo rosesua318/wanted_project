@@ -210,4 +210,75 @@ public class WantedDao {
 
         return new GetWantedRes(user, interestTags, point, 0, 0, 0, applicationStatus, profile, bookmarks, likeEmps);
     }
+
+    public GetInterestTagRes getInterestTag(int userIdx) {
+        String getUserQuery = "select name from User where userIdx = ?";
+        String getUserParams = String.valueOf(userIdx);
+        String username = this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new String(
+                        rs.getString("name")),
+                getUserParams);
+
+        String getBigQuery = "select itIdx, name from InterestTag";
+        List<TagSet> tagSets = this.jdbcTemplate.query(getBigQuery,
+                (rs, rowNum) -> new TagSet(
+                        rs.getInt("itIdx"),
+                        rs.getString("name")));
+
+        for(TagSet t : tagSets) {
+            String getTagQuery = "select h.homecategoryIdx, h.homecategory, " +
+                    "case when(select ut.utIdx from UserInterestTag ut JOIN User u ON ut.userIdx = u.userIdx where ut.homecategoryIdx = h.homecategoryIdx and ut.userIdx = ? and ut.status = 'ACTIVE') " +
+                    "is not null then 1 else 0 end as isInterest from HomeCategory h " +
+                    "JOIN InterestClassification ic ON ic.homecategoryIdx = h.homecategoryIdx " +
+                    "where ic.itIdx = ?";
+            Object[] getTagParams = new Object[]{ userIdx, t.getItIdx()};
+
+            List<InterestTagSet> tags = this.jdbcTemplate.query(getTagQuery,
+                    (rs, rowNum) -> new InterestTagSet(
+                            rs.getInt("homecategoryIdx"),
+                            rs.getString("homecategory"),
+                            rs.getInt("isInterest")),
+                    getTagParams);
+
+            t.setTags(tags);
+        }
+
+
+        return new GetInterestTagRes(username,tagSets);
+    }
+
+    public void setInterestTag(int userIdx, List<Integer> tags) {
+        for(int t : tags) {
+            String checkQuery = "select exists(select utIdx from UserInterestTag where userIdx = ? and homecategoryIdx = ?)";
+            Object[] checkParams = new Object[]{userIdx, t};
+            int isCheck = this.jdbcTemplate.queryForObject(checkQuery,
+                    int.class,
+                    checkParams);
+
+            if(isCheck == 0) {
+                String createQuery = "insert into UserInterestTag(homecategoryIdx, userIdx) VALUES(?,?)";
+                Object[] createParams = new Object[]{t, userIdx};
+                this.jdbcTemplate.update(createQuery,createParams);
+            } else {
+                String modifyQuery = "update UserInterestTag set status = 'ACTIVE' where userIdx=? and homecategoryIdx = ?";
+                Object[] modifyParams = new Object[]{userIdx, t};
+                this.jdbcTemplate.update(modifyQuery,modifyParams);
+            }
+        }
+
+        String getRecordQuery = "select homecategoryIdx from UserInterestTag where userIdx = ?";
+        String getRecordParams = String.valueOf(userIdx);
+        List<Integer> records = this.jdbcTemplate.query(getRecordQuery,
+                (rs, rowNum) -> new Integer(
+                        rs.getInt("homecategoryIdx")),
+                getRecordParams);
+
+        records.removeAll(tags);
+
+        for(int r : records) {
+            String deleteQuery = "update UserInterestTag set status = 'INACTIVE' where userIdx = ? and homecategoryIdx = ?";
+            Object[] deleteParams = new Object[]{userIdx, r};
+            this.jdbcTemplate.update(deleteQuery, deleteParams);
+        }
+    }
 }
