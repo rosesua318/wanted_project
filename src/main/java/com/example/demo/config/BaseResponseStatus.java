@@ -92,6 +92,8 @@ public enum BaseResponseStatus {
 
     SEARCH_TAG_NO_DATA(false, 4100, "존재하지 않는 태그입니다."),
 
+    SET_ALARM_WRONG_NUMBER(false, 4101, "형식이 맞지 않는 설정값입니다."),
+
     ;
 
 
