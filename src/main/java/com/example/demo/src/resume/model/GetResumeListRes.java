@@ -21,10 +21,9 @@ public class GetResumeListRes {
 
     private String updatedAt; //  최종 수정 날짜
 
-    private String language; // 작성된 언어
 
     private String status; // active 면 작성 완료 이런 식으로 구현 예정
 
-
+    private String language; // 작성된 언어
 
 }
