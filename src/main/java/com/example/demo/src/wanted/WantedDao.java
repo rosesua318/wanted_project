@@ -41,7 +41,7 @@ public class WantedDao {
 
         String getPointQuery = "select p.isPlus, p.cost from User u " +
                 "JOIN Point p ON p.userIdx = u.userIdx " +
-                "where u.userIdx=? and date_format(p.endAt, 'YY/MM/DD') > date_format(now(), 'YY/MM/DD')";
+                "where u.userIdx=? and date_format(p.endAt, '%Y%m%d') >= date_format(now(), '%Y%m%d')";
         String getPointParams = String.valueOf(userIdx);
         List<Point> points = this.jdbcTemplate.query(getPointQuery,
                 (rs, rowNum) -> new Point(
