@@ -70,3 +70,5 @@
 ## 2022.08.24
 #### 1. 테이블 생성 InterestTag(관심태그 대분류), InterestClassitifcation(관심태그 분류), UserInterestTag(사용자 관심태그 설정), Specialty(전문 분야 설정), SpecialtySkill(전문 분야 스킬 설정)
 #### 2. My 원티드 조회 API 
+#### 3. 지원 현황 조회 (작성중, 지원한 포지션) API 완성
+#### 4. 지원 현황 검색 - 회사명 검색 (작성중, 지원한 포지션) API 완성
