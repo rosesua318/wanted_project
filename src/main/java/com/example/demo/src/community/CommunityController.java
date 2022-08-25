@@ -139,4 +139,42 @@ public class CommunityController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 커뮤니티 게시글 상세 조회 (비회원용) API
+     * [GET] /communities/postings/:postingIdx
+     * @return BaseResponse<GetPostingOpenRes>
+     */
+    @ResponseBody
+    @GetMapping("/postings/{postingIdx}")
+    public BaseResponse<GetPostingOpenRes> getPostingOpen(@PathVariable("postingIdx") int postingIdx) throws BaseException {
+        try {
+            GetPostingOpenRes getPostingRes = communityProvider.getPostingOpen(postingIdx);
+            return new BaseResponse<>(getPostingRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 게시글 상세 조회 (회원용) API
+     * [GET] /communities/postings/:postingIdx/:userIdx
+     * @return BaseResponse<GetPostingRes>
+     */
+    @ResponseBody
+    @GetMapping("/postings/{postingIdx}/{userIdx}")
+    public BaseResponse<GetPostingRes> getPosting(@PathVariable("postingIdx") int postingIdx, @PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetPostingRes getPostingRes = communityProvider.getPosting(postingIdx, userIdx);
+            return new BaseResponse<>(getPostingRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }
