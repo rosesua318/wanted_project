@@ -89,3 +89,4 @@
 #### 4. LikePost 테이블 추가 (likePostIdx, positingIdx, userIdx, status) - 커뮤니티 게시글 좋아요 테이블
 #### 5. CommunityTag 테이블 추가 (ctIdx, name) (추천,전체,회사생활 등) - 커뮤니티 태그 테이블
 #### 6. PostingTag 추가 (ptIdx, postingIdx, ctIdx) - Posting과 CommunityTag 연결 테이블
+#### 7. WantedDao 오류 수정 (null 결과값을 위해 try-catch문 씀)
