@@ -9,7 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetAllOpenRes {
+public class GetAllRes {
+    private MyUser user;
     private int focusTagIdx;
     private List<CommunityTag> communityTags;
     private List<PostingMore> postingList;

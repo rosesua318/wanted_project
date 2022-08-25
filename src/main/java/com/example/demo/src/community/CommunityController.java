@@ -2,6 +2,8 @@ package com.example.demo.src.community;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.community.model.GetAllOpenRes;
+import com.example.demo.src.community.model.GetAllRes;
 import com.example.demo.src.community.model.GetOtherOpenRes;
 import com.example.demo.src.community.model.GetOtherRes;
 import com.example.demo.utils.JwtService;
@@ -60,6 +62,44 @@ public class CommunityController {
             }
             GetOtherRes getOtherRes = communityProvider.getOtherTab(userIdx, ctIdx);
             return new BaseResponse<>(getOtherRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 전체 탭 조회 (비회원용) API
+     * [GET] /communities/totals
+     * @return BaseResponse<GetAllOpenRes>
+     */
+    @ResponseBody
+    @GetMapping("/totals")
+    public BaseResponse<GetAllOpenRes> getAllTabOpen() throws BaseException {
+        try {
+            GetAllOpenRes getAllRes = communityProvider.getAllTabOpen();
+            return new BaseResponse<>(getAllRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 전체 탭 조회 (회원용) API
+     * [GET] /communities/totals/:userIdx
+     * @return BaseResponse<GetAllRes>
+     */
+    @ResponseBody
+    @GetMapping("/totals/{userIdx}")
+    public BaseResponse<GetAllRes> getAllTab(@PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetAllRes getAllRes = communityProvider.getAllTab(userIdx);
+            return new BaseResponse<>(getAllRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }

@@ -1,6 +1,8 @@
 package com.example.demo.src.community;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.community.model.GetAllOpenRes;
+import com.example.demo.src.community.model.GetAllRes;
 import com.example.demo.src.community.model.GetOtherOpenRes;
 import com.example.demo.src.community.model.GetOtherRes;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,22 @@ public class CommunityProvider {
     public GetOtherRes getOtherTab(int userIdx, int ctIdx) throws BaseException {
         try {
             return communityDao.getOtherTab(userIdx, ctIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetAllOpenRes getAllTabOpen() throws BaseException {
+        try {
+            return communityDao.getAllTabOpen();
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetAllRes getAllTab(int userIdx) throws BaseException {
+        try {
+            return communityDao.getAllTab(userIdx);
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
