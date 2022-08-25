@@ -90,3 +90,4 @@
 #### 5. CommunityTag 테이블 추가 (ctIdx, name) (추천,전체,회사생활 등) - 커뮤니티 태그 테이블
 #### 6. PostingTag 추가 (ptIdx, postingIdx, ctIdx) - Posting과 CommunityTag 연결 테이블
 #### 7. WantedDao 오류 수정 (null 결과값을 위해 try-catch문 씀)
+#### 8. 커뮤니티 기능을 위한 더미데이터 삽입 (게시글, 댓글, 커뮤니티 태그)
