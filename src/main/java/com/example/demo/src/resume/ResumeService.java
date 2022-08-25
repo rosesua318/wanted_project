@@ -3,6 +3,7 @@ package com.example.demo.src.resume;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.bookmark.model.PostBookMarkReq;
 import com.example.demo.src.bookmark.model.PostBookmarkRes;
+import com.example.demo.src.resume.model.PatchResumeUpdateReq;
 import com.example.demo.src.resume.model.PostResumeRes;
 import com.example.demo.src.resume.model.ResumeTable;
 import com.example.demo.utils.JwtService;
@@ -64,6 +65,88 @@ public class ResumeService {
             int result = resumeDao.deleteResumeTable(tableName, Idx);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_RESUMETABLE_STATUS);
+            }
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+    // 이력서 수정/작성(상세정보 등록)
+    public boolean updateResume(PatchResumeUpdateReq patchResumeUpdateReq) throws BaseException{
+
+        int resumeIdx = patchResumeUpdateReq.getResumeIntro().getResumeIdx();
+
+        try{
+            // userIdx 검증
+             if(patchResumeUpdateReq.getUserIdx() != resumeDao.checkUser(resumeIdx)){
+                throw new BaseException(INVALID_USER_JWT);
+             }
+
+             // 1. ResumeIntro
+            if((patchResumeUpdateReq.getResumeIntro()!=null)){
+
+             resumeDao.updateResumeInfo(patchResumeUpdateReq.getResumeIntro(), resumeIdx);
+             }
+
+
+
+            //2. Career
+             if((patchResumeUpdateReq.getCareerList()!=null)){
+                resumeDao.updateCareer(patchResumeUpdateReq.getCareerList());
+             }
+
+             // 3. CareerResult
+            if((patchResumeUpdateReq.getCareerResultList()!=null)){
+                resumeDao.updateCareerResult(patchResumeUpdateReq.getCareerResultList());
+             }
+
+             // 4. Education
+            if((patchResumeUpdateReq.getEducationList()!=null)){
+                resumeDao.updateEducation(patchResumeUpdateReq.getEducationList());
+
+            }
+
+//        if(!isEmpty(patchCvReq.getSkillList())){
+//            cvDao.createCvSkill(patchCvReq.getSkillList(), cvIdx);
+//        }
+
+            // 5. Award
+            if((patchResumeUpdateReq.getAwardList()!=null)){
+                resumeDao.updateAward(patchResumeUpdateReq.getAwardList());
+            }
+
+            // 6. ForeignLanguage
+            if((patchResumeUpdateReq.getForeignLanguageList()!=null)){
+                resumeDao.updateLanguage(patchResumeUpdateReq.getForeignLanguageList());
+             }
+
+
+            // 7. LanguageTest
+            if((patchResumeUpdateReq.getLanguageTestList()!=null)){
+                resumeDao.updateLanguageTest(patchResumeUpdateReq.getLanguageTestList());
+            }
+
+            // 8. 링크
+            if((patchResumeUpdateReq.getResumeLinkList()!=null)){
+                 resumeDao.updateLink(patchResumeUpdateReq.getResumeLinkList());
+             }
+
+            return true;
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
+    // 이력서 삭제
+
+    public void deleteResume(int resumeIdx) throws BaseException {
+
+        try {
+            int result = resumeDao.deleteResume(resumeIdx);
+            if(result == 0){
+                throw new BaseException(DELETE_FAIL_RESUME);
             }
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

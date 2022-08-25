@@ -28,7 +28,5 @@ public enum ResumeTable {
         this.parentKey = parentKey;
     }
 
-//    public String getTableName(){
-//        return tableName;
-//    }
+
 }

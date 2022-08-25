@@ -96,6 +96,29 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_BOOKMARK_STATUS(false,4030,"북마크 삭제에 실패하였습니다."),
 
     MODIFY_FAIL_RESUMETABLE_STATUS(false,4031,"이력서 테이블 삭제에 실패하였습니다."),
+
+    UPDATE_FAIL_RESUMEINFO(false,4032,"이력서 기본컬럼 작성에 실패하였습니다."),
+
+    UPDATE_FAIL_CAREER(false,4033,"이력서 경력 작성에 실패하였습니다."),
+
+    UPDATE_FAIL_CAREERESULT(false,4044,"이력서 경력 성과 작성에 실패하였습니다."),
+
+    UPDATE_FAIL_EDUCATION(false,4045,"이력서 학력 작성에 실패하였습니다."),
+
+    UPDATE_FAIL_LANGUAGE(false,4046,"이력서 외국어 작성에 실패하였습니다."),
+
+    UPDATE_FAIL_TEST(false,4047,"이력서 어학시험 작성에 실패하였습니다."),
+
+    UPDATE_FAIL_LINK(false,4048,"이력서 링크 작성에 실패하였습니다."),
+
+    UPDATE_FAIL_AWARD(false,4049,"이력서 수상 작성에 실패하였습니다."),
+
+    DELETE_FAIL_RESUME(false,4050,"이력서 삭제에 실패했습니다."),
+
+
+
+
+    // 수아님
     SEARCH_TAG_NO_DATA(false, 4100, "존재하지 않는 태그입니다."),
 
     SET_ALARM_WRONG_NUMBER(false, 4101, "형식이 맞지 않는 설정값입니다."),

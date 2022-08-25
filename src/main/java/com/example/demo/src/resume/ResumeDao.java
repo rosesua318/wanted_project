@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
 
-import static com.example.demo.config.BaseResponseStatus.CREATE_FAIL_RESUMETABLE;
-import static com.example.demo.config.BaseResponseStatus.DELETE_FAIL_RESUMETABLE;
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @Repository
 public class ResumeDao {
@@ -47,8 +46,6 @@ public class ResumeDao {
     // 이력서 상세 조회
 
     public GetResumeDetailRes getResumeDetail(int userIdx, int resumeIdx){
-
-        System.out.println("이력서상세조회");
 
         // Resume
         String getResumeIntroQuery = "SELECT resumeIdx,language,title,U.name,U.email,U.phone,introduce,\n" +
@@ -228,13 +225,116 @@ public class ResumeDao {
     public int deleteResumeTable(ResumeTable resumeTable, int Idx) throws BaseException {
         String tableName = resumeTable.getTableName();
         String primaryKey = resumeTable.getPrimaryKey();
-        System.out.println("삭제하기 메서드");
         String deleteResumeTableQuery = " UPDATE " + tableName + " SET status = 'DELETE' WHERE " + primaryKey + " = ?";
-   //     UPDATE Career SET Career.status = 'DELETE' WHERE careerIdx =?;
         return this.jdbcTemplate.update(deleteResumeTableQuery,Idx);
     }
 
 
+    public int checkUser(int resumeIdx) {
+        String checkUserQuery = "SELECT userIdx FROM Resume WHERE resumeIdx = ?";
+        return this.jdbcTemplate.queryForObject(checkUserQuery, int.class, resumeIdx);
+
+    }
+
+    // 이력서 작성/수정
+
+    //1.ResumeInfo
+    public void updateResumeInfo(Resume resumeIntro, int resumeIdx) throws BaseException{
+        String updateResumeInfoQuery = " update Resume set language = ?,title = ?, introduce =?  WHERE resumeIdx =? ";
+        Object[] updateResumeInfoParams = new Object[]{resumeIntro.getLanguage(),resumeIntro.getTitle(),resumeIntro.getIntroduce(),resumeIntro.getResumeIdx()};
+        if(this.jdbcTemplate.update(updateResumeInfoQuery, updateResumeInfoParams)==0){
+           throw new BaseException(UPDATE_FAIL_RESUMEINFO);
+       }
+
+    }
+    // 2. Career
+    public void updateCareer(List<Career> careerList) throws BaseException{
+        String updateCareerQuery = "UPDATE Career SET company = ?, department = ? , isPresent =?, startedAt =?, endAt =?  WHERE careerIdx =?;";
+
+        for(Career career : careerList ) {
+            Object[] updateCareerParams = new Object[]{career.getCompany(), career.getDepartment(), career.getIsPresent(), career.getStartedAt(), career.getEndAt(), career.getCareerIdx()};
+            if (this.jdbcTemplate.update(updateCareerQuery, updateCareerParams) == 0) {
+                throw new BaseException(UPDATE_FAIL_CAREER);
+            }
+        }
+    }
+
+    // 3. CareerResult
+
+    public void updateCareerResult(List<CareerResult> careerResultList) throws BaseException{
+        String updateCareerResultQuery = "UPDATE Result SET title =?, startedAt =?, endAt =?, content =? WHERE resultIdx = ?;";
+        for(CareerResult cr : careerResultList){
+            Object[] updateCareerResultParams = new Object[]{cr.getTitle(),cr.getStartedAt(),cr.getEndAt(),cr.getContent(),cr.getResultIdx()};
+            if(this.jdbcTemplate.update(updateCareerResultQuery, updateCareerResultParams) == 0) {
+                throw new BaseException(UPDATE_FAIL_CAREERESULT);
+            }
+        }
+    }
+
+    // 4. Education
+    public void updateEducation(List<Education> educationList) throws BaseException{
+        String updateEducationQuery = "UPDATE Education SET name =?, major =?, study =?, isPresent =?, startedAt =?, endAt =? WHERE educationIdx = ?;";
+
+        for( Education edu : educationList){
+                Object[] updateEducationParams = new Object[]{edu.getUniversity(),edu.getMajor(),edu.getStudy(),edu.getIsPresent(),edu.getStartedAt(),edu.getEndAt(),edu.getEduIdx()};
+                if(this.jdbcTemplate.update(updateEducationQuery, updateEducationParams) == 0) {
+                    throw new BaseException(UPDATE_FAIL_EDUCATION);
+                 }
+         }
+    }
+
+    // 5. Award
+    public void updateAward(List<Award> awardList) throws BaseException{
+        String updateAwardQuery = "UPDATE Awards SET createdAt =?, title =?, content =? WHERE awardsIdx = ?;";
+
+        for(Award award : awardList) {
+            Object[] updateAwardParams = new Object[]{award.getCreatedAt(), award.getTitle(), award.getContent(), award.getAwardIdx()};
+            if (this.jdbcTemplate.update(updateAwardQuery, updateAwardParams) == 0) {
+                throw new BaseException(UPDATE_FAIL_AWARD);
+            }
+        }
+    }
+
+    //6. ForeignLanguage
+    public void updateLanguage(List<ForeignLanguage> foreignLanguageList) throws BaseException{
+        String updateLanguageQuery = "UPDATE ForeignLanguage SET languageIdx =?, level =? WHERE flIdx = ?;";
+        for(ForeignLanguage fl : foreignLanguageList){
+            Object[] updateLanguageParams = new Object[]{fl.getLanguage(),fl.getLevel(),fl.getForeignLngIdx()};
+            if(this.jdbcTemplate.update(updateLanguageQuery, updateLanguageParams) == 0) {
+            throw new BaseException(UPDATE_FAIL_LANGUAGE);
+            }
+        }
+    }
+
+    // 7. ForeignLanguage Test
+    public void updateLanguageTest(List<LanguageTest> languageTestList) throws BaseException{
+        String updateTestQuery = "UPDATE Test SET title =?, score =?, createdAt =? WHERE testIdx = ?;";
+
+        for(LanguageTest lt : languageTestList) {
+            Object[] updateTestParams = new Object[]{lt.getTitle(), lt.getScore(), lt.getCreatedAt(), lt.getLanguageTestIdx()};
+            if (this.jdbcTemplate.update(updateTestQuery, updateTestParams) == 0) {
+                throw new BaseException(UPDATE_FAIL_TEST);
+            }
+        }
+    }
+
+    // 8. Link
+    public void updateLink(List<ResumeLink> linkList) throws BaseException {
+        String updateLinkQuery = "UPDATE Link SET url =? WHERE linkIdx = ?;";
+
+        for (ResumeLink link : linkList) {
+            Object[] updateLinkParams = new Object[]{link.getLinkUrl(), link.getLinkIdx()};
+            if (this.jdbcTemplate.update(updateLinkQuery, updateLinkParams) == 0) {
+                throw new BaseException(UPDATE_FAIL_LINK);
+            }
+        }
+    }
+
+    // 이력서 삭제
+    public int deleteResume(int resumeIdx) throws BaseException {
+        String deleteResumeQuery = " UPDATE Resume SET status = 'DELETE' WHERE resumeIdx = ?";
+        return this.jdbcTemplate.update(deleteResumeQuery,resumeIdx);
+    }
 
     // 해당 인덱스의 이력서가 있는지 확인합니다.
 //    public int checkResume(int resumeIdx) throws BaseException{
