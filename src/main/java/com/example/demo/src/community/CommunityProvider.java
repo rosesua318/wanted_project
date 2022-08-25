@@ -1,10 +1,7 @@
 package com.example.demo.src.community;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.community.model.GetAllOpenRes;
-import com.example.demo.src.community.model.GetAllRes;
-import com.example.demo.src.community.model.GetOtherOpenRes;
-import com.example.demo.src.community.model.GetOtherRes;
+import com.example.demo.src.community.model.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +44,22 @@ public class CommunityProvider {
     public GetAllRes getAllTab(int userIdx) throws BaseException {
         try {
             return communityDao.getAllTab(userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetRecommOpenRes getRecommTabOpen() throws BaseException {
+        try {
+            return communityDao.getRecommTabOpen();
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetRecommRes getRecommTab(int userIdx) throws BaseException {
+        try {
+            return communityDao.getRecommTab(userIdx);
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
