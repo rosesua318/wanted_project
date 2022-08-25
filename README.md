@@ -79,3 +79,11 @@
 #### 9. 알림 조회 API 완성
 #### 10. 알림 설정 조회 API 완성
 #### 11. 알림 설정 API 완성 
+
+## 2022.08.25
+#### 1. User테이블에 isNickname (커뮤니티 프로필 닉네임 설정 여부), nickname VARCHAR(8) 컬럼 추가
+#### 2. Posting 테이블 추가 (postingIdx, title, content, imageUrl, createdAt, updatedAt, status, userIdx) - 커뮤니티 게시글 테이블
+#### 3. Comment 테이블 추가 (commentIdx, content, userIdx, positingIdx, createdAt, status) - 커뮤니티 댓글 테이블
+#### 4. LikePost 테이블 추가 (likePostIdx, positingIdx, userIdx, status) - 커뮤니티 게시글 좋아요 테이블
+#### 5. CommunityTag 테이블 추가 (ctIdx, name) (추천,전체,회사생활 등) - 커뮤니티 태그 테이블
+#### 6. PostingTag 추가 (ptIdx, postingIdx, ctIdx) - Posting과 CommunityTag 연결 테이블
