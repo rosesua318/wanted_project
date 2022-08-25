@@ -117,7 +117,7 @@ public class PositionDao {
                             rs.getString("recommender")),
                     getRewardParams);
             int reward = Integer.parseInt(getRewardRes.getApplicant()) + Integer.parseInt(getRewardRes.getRecommender());
-            e.setReward("채용보상금 " + String.valueOf(reward) + "원");
+            e.setReward(reward);
 
             e.setIsBookmark(0);
         }
@@ -227,7 +227,7 @@ public class PositionDao {
                             rs.getString("recommender")),
                     getRewardParams);
             int reward = Integer.parseInt(getRewardRes.getApplicant()) + Integer.parseInt(getRewardRes.getRecommender());
-            e.setReward("채용보상금 " + String.valueOf(reward) + "원");
+            e.setReward(reward);
         }
 
         return new GetOpenPositionRes(jobCategory, dutyCategory, empRegion, "전체", searchCategories, companies, employments);

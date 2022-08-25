@@ -20,7 +20,7 @@ public class GetEmploymentInfoRes {
     private String employment; // 채용 포지션 타이틀
     private String company; // 회사 명
     private String nation; // 국가 명
-    private String compensation; // 채용보상금
+    private int compensation; // 채용보상금
 
 
 

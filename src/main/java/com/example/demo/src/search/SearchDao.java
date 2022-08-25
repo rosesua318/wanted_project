@@ -166,7 +166,7 @@ public class SearchDao {
                             rs.getString("recommender")),
                     getRewardParams);
             int reward = Integer.parseInt(getRewardRes.getApplicant()) + Integer.parseInt(getRewardRes.getRecommender());
-            e.setReward("채용보상금 " + String.valueOf(reward) + "원");
+            e.setReward(reward);
 
             e.setIsBookmark(0);
         }
@@ -292,7 +292,7 @@ public class SearchDao {
                             rs.getString("recommender")),
                     getRewardParams);
             int reward = Integer.parseInt(getRewardRes.getApplicant()) + Integer.parseInt(getRewardRes.getRecommender());
-            e.setReward("채용보상금 " + String.valueOf(reward) + "원");
+            e.setReward(reward);
         }
 
 

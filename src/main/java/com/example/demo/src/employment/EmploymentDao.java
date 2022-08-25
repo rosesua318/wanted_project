@@ -27,7 +27,7 @@ public class EmploymentDao {
     public List<GetEmploymentInfoRes> getEmploymentInfo (int userIdx) {
 
         String getEmploymentQuery =
-                "SELECT EMP.employmentIdx,employmentImg,employment,companyName,N.name AS nation,CONCAT((applicant+recommender),'원') AS compensation FROM Employment AS EMP " +
+                "SELECT EMP.employmentIdx,employmentImg,employment,companyName,N.name AS nation,applicant+recommender AS compensation FROM Employment AS EMP " +
                         "JOIN EmploymentImg AS EMPIMG ON EMPIMG.employmentIdx = EMP.employmentIdx " +
                         "JOIN Company AS C ON C.companyIdx = EMP.companyIdx " +
                         "JOIN Nation AS N " +
@@ -43,7 +43,7 @@ public class EmploymentDao {
                         rs.getString("employment"),
                         rs.getString("companyName"),
                         rs.getString("nation"),
-                        rs.getString("compensation")),
+                        rs.getInt("compensation")),
                 getEmploymentParams);
 
         int count = 0;        // 이미지 1개만 나올 수 있도록.
@@ -75,7 +75,7 @@ public class EmploymentDao {
 
 
 
-        String getEmploymentQuery = "SELECT Employment.employmentIdx,EmploymentImg.employmentImg, Employment.employment, Company.companyName, CONCAT(R.name,'.',N.name) AS Region,CONCAT((applicant+recommender),'원') AS compensation FROM Employment "+
+        String getEmploymentQuery = "SELECT Employment.employmentIdx,EmploymentImg.employmentImg, Employment.employment, Company.companyName, CONCAT(R.name,'.',N.name) AS Region,applicant+recommender AS compensation FROM Employment "+
         " JOIN EmploymentImg ON EmploymentImg.employmentIdx = Employment.employmentIdx"+
         " JOIN Company ON Company.companyIdx = Employment.companyIdx"+
         " JOIN Nation AS N"+
@@ -90,7 +90,7 @@ public class EmploymentDao {
                         rs.getString("employment"),
                         rs.getString("companyName"),
                         rs.getString("region"),
-                        rs.getString("compensation")));
+                        rs.getInt("compensation")));
 
         int  empCnt = 0;
         // 이미지 1개만 나올 수 있도록.
@@ -154,7 +154,7 @@ public class EmploymentDao {
                         rs.getString("imageUrl")));
 
 
-        String getEmploymentQuery = "SELECT Employment.employmentIdx,EmploymentImg.employmentImg, Employment.employment, Company.companyName, CONCAT(R.name,'.',N.name) AS Region,CONCAT((applicant+recommender),'원') AS compensation FROM Employment "+
+        String getEmploymentQuery = "SELECT Employment.employmentIdx,EmploymentImg.employmentImg, Employment.employment, Company.companyName, CONCAT(R.name,'.',N.name) AS Region,applicant+recommender AS compensation FROM Employment "+
                 " JOIN EmploymentImg ON EmploymentImg.employmentIdx = Employment.employmentIdx"+
                 " JOIN Company ON Company.companyIdx = Employment.companyIdx"+
                 " JOIN Nation AS N"+
@@ -169,7 +169,7 @@ public class EmploymentDao {
                         rs.getString("employment"),
                         rs.getString("companyName"),
                         rs.getString("region"),
-                        rs.getString("compensation")));
+                        rs.getInt("compensation")));
 
         int  empCnt = 0;
         // 이미지 1개만 나올 수 있도록.

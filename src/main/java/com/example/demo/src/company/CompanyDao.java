@@ -37,7 +37,7 @@ public class CompanyDao {
 
         // 2. CompanyEmp
 
-        String getCompanyEmpQuery = "SELECT employmentIdx,employment,CONCAT('채용보상금 ',(recommender+applicant),'원') AS compensation, deadline\n" +
+        String getCompanyEmpQuery = "SELECT employmentIdx,employment, recommender+applicant AS compensation, deadline\n" +
                 " FROM Employment\n" +
                 " JOIN Company ON Company.companyIdx = Employment.companyIdx WHERE Company.CompanyIdx = ? LIMIT 4";
 
@@ -45,7 +45,7 @@ public class CompanyDao {
                 (rs, rowNum) -> new CompanyEmp(
                         rs.getInt("employmentIdx"),
                         rs.getString("employment"),
-                        rs.getString("compensation"),
+                        rs.getInt("compensation"),
                         rs.getString("deadline")),
                 getCompanyDetailParams);
 
@@ -108,7 +108,7 @@ public class CompanyDao {
 
         // 2. CompanyEmp
 
-        String getCompanyEmpQuery = "SELECT employmentIdx,employment,CONCAT('채용보상금 ',(recommender+applicant),'원') AS compensation, deadline,\n" +
+        String getCompanyEmpQuery = "SELECT employmentIdx,employment,recommender+applicant AS compensation, deadline,\n" +
                 "        CASE WHEN(SELECT Bookmark.bookmarkIdx FROM Bookmark WHERE Bookmark.userIdx = ? AND Bookmark.employmentIdx = Employment.employmentIdx) IS NOT NULL THEN 1 ELSE 0 END AS isBookmark FROM Employment\n" +
                 "    JOIN Company ON Company.companyIdx = Employment.companyIdx WHERE Company.CompanyIdx = ? LIMIT 4";
 
@@ -116,7 +116,7 @@ public class CompanyDao {
                 (rs, rowNum) -> new CompanyEmp(
                         rs.getInt("employmentIdx"),
                         rs.getString("employment"),
-                        rs.getString("compensation"),
+                        rs.getInt("compensation"),
                         rs.getString("deadline"),
                         rs.getInt("isBookmark")),
                 getCompanyDetailParams);
