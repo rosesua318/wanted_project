@@ -2,6 +2,7 @@ package com.example.demo.src.wanted;
 
 import com.example.demo.src.wanted.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -92,15 +93,22 @@ public class WantedDao {
             }
         }
 
-        String getResumeQuery = "select resumeIdx from Resume r where r.userIdx = ? LIMIT 1";
-        String getResumeParams = String.valueOf(userIdx);
-        String resumeIdx = this.jdbcTemplate.queryForObject(getResumeQuery,
-                (rs, rowNum) -> new String(
-                        String.valueOf(rs.getInt("resumeIdx"))),
-                getResumeParams);
+        String resumeIdx;
+        try {
+            String getResumeQuery = "select resumeIdx from Resume r where r.userIdx = ? LIMIT 1";
+            String getResumeParams = String.valueOf(userIdx);
+            resumeIdx = this.jdbcTemplate.queryForObject(getResumeQuery,
+                    (rs, rowNum) -> new String(
+                            String.valueOf(rs.getInt("resumeIdx"))),
+                    getResumeParams);
+        } catch(IncorrectResultSizeDataAccessException error) { // 쿼리문에 해당하는 결과가 없거나 2개 이상일 때
+            resumeIdx = null;
+        }
 
         String getUserInfoQuery;
         Object[] getUserInfoParams;
+        UserInfo userInfo;
+        String info;
         if(resumeIdx != null) {
             getUserInfoQuery = "select c.company, ec.category, es.subcategory from User u " +
                     "JOIN Resume r ON r.userIdx = u.userIdx " +
@@ -110,6 +118,13 @@ public class WantedDao {
                     "JOIN EmploymentSubCategory es ON es.subcategoryIdx = s.categoryIdx " +
                     "where u.userIdx=? and r.resumeIdx=?";
             getUserInfoParams = new Object[]{userIdx, resumeIdx};
+            userInfo = this.jdbcTemplate.queryForObject(getUserInfoQuery,
+                    (rs, rowNum) -> new UserInfo(
+                            rs.getString("company"),
+                            rs.getString("category"),
+                            rs.getString("subcategory")),
+                    getUserInfoParams);
+            info = userInfo.getCompanyName() + ", " + userInfo.getJob() + ", " + userInfo.getDuty();
         } else {
             getUserInfoQuery = "select ec.category, es.subcategory from User u " +
                     "JOIN Specialty s ON s.userIdx = u.userIdx " +
@@ -117,16 +132,14 @@ public class WantedDao {
                     "JOIN EmploymentSubCategory es ON es.subcategoryIdx = s.categoryIdx " +
                     "where u.userIdx=?";
             getUserInfoParams = new Object[]{userIdx};
+            userInfo = this.jdbcTemplate.queryForObject(getUserInfoQuery,
+                    (rs, rowNum) -> new UserInfo(
+                            "",
+                            rs.getString("category"),
+                            rs.getString("subcategory")),
+                    getUserInfoParams);
+            info = userInfo.getJob() + ", " + userInfo.getDuty();
         }
-
-        UserInfo userInfo = this.jdbcTemplate.queryForObject(getUserInfoQuery,
-                (rs, rowNum) -> new UserInfo(
-                        rs.getString("company"),
-                        rs.getString("category"),
-                        rs.getString("subcategory")),
-                getUserInfoParams);
-
-        String info = userInfo.getCompanyName() + ", " + userInfo.getJob() + ", " + userInfo.getDuty();
 
         int percent = 0;
         String getCheckQuery = "select exists(select resumeIdx from Resume where userIdx= ?) as isResume, " +
@@ -134,7 +147,7 @@ public class WantedDao {
                 "exists(select e.educationIdx from Education e JOIN Resume r ON e.resumeIdx = r.resumeIdx where r.userIdx= ?) as isEducation, " +
                 "exists(select c.careerIdx from Career c JOIN Resume r ON c.resumeIdx = r.resumeIdx where r.userIdx= ?) as isCareer, " +
                 "exists(select introduce from Resume where userIdx= ? and introduce != '') as isIntroduce, " +
-                "introduce From Resume where userIdx = ? LIMIT 1";
+                "(select introduce From Resume where userIdx = 7 LIMIT 1) as introduce From User u where u.userIdx = ?";
         Object[] getCheckParams = new Object[]{userIdx, userIdx, userIdx, userIdx, userIdx, userIdx};
         ProfileCheck profileCheck = this.jdbcTemplate.queryForObject(getCheckQuery,
                 (rs, rowNum) -> new ProfileCheck(
@@ -145,6 +158,10 @@ public class WantedDao {
                         rs.getInt("isIntroduce"),
                         rs.getString("introduce")),
                 getCheckParams);
+
+        if(profileCheck.getIntroduce() == null) {
+            profileCheck.setIntroduce("");
+        }
 
         if(profileCheck.getIsSpecialty() == 0) {
             percent = 30;
