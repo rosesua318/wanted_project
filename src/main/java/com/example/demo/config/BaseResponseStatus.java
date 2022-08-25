@@ -21,6 +21,7 @@ public enum BaseResponseStatus {
     EMPTY_JWT(false, 2001, "JWT를 입력해주세요."),
     INVALID_JWT(false, 2002, "유효하지 않은 JWT입니다."),
     INVALID_USER_JWT(false,2003,"권한이 없는 유저의 접근입니다."),
+    INVALID_USER_IDX(false,2004,"유저 인덱스가 일치하지 않습니다."),
 
     // users
     USERS_EMPTY_USER_ID(false, 2010, "유저 아이디 값을 확인해주세요."),
@@ -55,6 +56,8 @@ public enum BaseResponseStatus {
 
     PATCH_FOLLOW_NO_DATA(false,2034,"팔로우가 되어있지 않은 상태입니다."),
 
+    POST_RESUMETABLE_NOT_EXISTS(false,2035,"생성되어있지 않은 이력서입니다."),
+
     PATCH_SEARCH_RECORDS_NO_DATA(false, 2100, "없는 검색 기록을 삭제하려고 합니다."),
 
     /**
@@ -87,9 +90,12 @@ public enum BaseResponseStatus {
 
     MODIFY_FAIL_PWD(false,4015,"비밀번호 변경에 실패하였습니다."),
 
+    CREATE_FAIL_RESUMETABLE(false,4016,"이력서 테이블(요소) 생성에 실패하였습니다."),
+
+    DELETE_FAIL_RESUMETABLE(false,4017,"이력서  테이블(요소) 삭제에 실패하였습니다."),
     MODIFY_FAIL_BOOKMARK_STATUS(false,4030,"북마크 삭제에 실패하였습니다."),
 
-
+    MODIFY_FAIL_RESUMETABLE_STATUS(false,4031,"이력서 테이블 삭제에 실패하였습니다."),
     SEARCH_TAG_NO_DATA(false, 4100, "존재하지 않는 태그입니다."),
 
     SET_ALARM_WRONG_NUMBER(false, 4101, "형식이 맞지 않는 설정값입니다."),

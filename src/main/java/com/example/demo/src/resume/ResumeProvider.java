@@ -35,12 +35,11 @@ public class ResumeProvider {
      * 이력서 리스트 조회
      */
 
-    public List<GetResumeListRes> getResumeList(int userIdx) throws BaseException{
-        try{
+    public List<GetResumeListRes> getResumeList(int userIdx) throws BaseException {
+        try {
             List<GetResumeListRes> getResumeListResList = resumeDao.getResumeList(userIdx);
             return getResumeListResList;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -51,13 +50,24 @@ public class ResumeProvider {
      */
 
     public GetResumeDetailRes getResumeDetail(int userIdx, int resumeIdx) throws BaseException {
-        try{
-            GetResumeDetailRes getResumeDetailRes = resumeDao.getResumeDetail(userIdx,resumeIdx);
+        try {
+            GetResumeDetailRes getResumeDetailRes = resumeDao.getResumeDetail(userIdx, resumeIdx);
             return getResumeDetailRes;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
 
+    // 생성된 이력서가 있는 지 체크합니다.
+//    public int checkResume(int resumeIdx) throws BaseException {
+//
+//        try {
+//            return resumeDao.checkResume(resumeIdx);
+//
+//        } catch (Exception exception) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//
+//    }
 }
