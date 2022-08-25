@@ -417,7 +417,7 @@ public class CommunityDao {
                             rs.getInt("commentNum")
                     ), getPostingParams);
         } else {
-            getPostingQuery = "select p.postingIdx, u.userIdx, u.imageUrl as profileUrl, " +
+            getPostingQuery = "select DISTINCT p.postingIdx, u.userIdx, u.imageUrl as profileUrl, " +
                     "case when u.isNickname = 0 " +
                     "then u.name else u.nickname end as name, ec.category as job, " +
                     "case when s.career " +
