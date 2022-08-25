@@ -344,4 +344,49 @@ public class ResumeController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    // 이력서 상세 정보 등록(수정)
+
+    @ResponseBody
+    @PatchMapping("/{userIdx}/{resumeIdx}")
+    public BaseResponse<String> updateResumeDetail(@PathVariable("userIdx") int userIdx, @PathVariable("resumeIdx") int resumeIdx,  @RequestBody PatchResumeUpdateReq patchResumeDetailReq) {
+
+        try {
+            //        jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            resumeService.updateResume(patchResumeDetailReq);
+
+            String result = "이력서 작성 완료";
+            return new BaseResponse<>(result);
+
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    // 이력서 삭제
+    @ResponseBody
+    @PatchMapping("/status/{userIdx}/{resumeIdx}")
+    public BaseResponse<String> deleteResume(@PathVariable("userIdx") int userIdx, @PathVariable("resumeIdx") int resumeIdx){
+        try{
+            //        jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            resumeService.deleteResume(resumeIdx);
+
+            String result = "이력서 삭제 완료";
+            return new BaseResponse<>(result);
+
+        }catch(BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }
