@@ -1,5 +1,6 @@
 package com.example.demo.src.resume;
 
+import com.example.demo.config.BaseException;
 import com.example.demo.src.resume.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -7,6 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.CREATE_FAIL_RESUMETABLE;
+import static com.example.demo.config.BaseResponseStatus.DELETE_FAIL_RESUMETABLE;
 
 @Repository
 public class ResumeDao {
@@ -69,7 +73,7 @@ public class ResumeDao {
         // Career
 
         String getCareerQuery = "SELECT careerIdx, company, department, isPresent, startedAt, endAt FROM Career AS C\n" +
-                "WHERE resumeIdx =?;";
+                "WHERE resumeIdx =? AND C.status = 'ACTIVE';";
 
         List<Career> careerList = this.jdbcTemplate.query(getCareerQuery,
                 (rs,rowNum)-> new Career(
@@ -84,7 +88,7 @@ public class ResumeDao {
         // CareerResult
 
         String getCareerResultQuery = "SELECT R.careerIdx,R.resultIdx,  R.title, R.startedAt, R.endAt, R.content FROM Result AS R\n" +
-                "JOIN Career AS C ON C.careerIdx = R.careerIdx WHERE C.resumeIdx =?;";
+                "JOIN Career AS C ON C.careerIdx = R.careerIdx WHERE C.resumeIdx =? AND R.status = 'ACTIVE';";
 
         List<CareerResult> careerResultList = this.jdbcTemplate.query(getCareerResultQuery,
                 (rs,rowNum)-> new CareerResult(
@@ -98,7 +102,7 @@ public class ResumeDao {
 
         // Education
 
-        String getEduQuery = "SELECT educationIdx, name AS university, major, study, isPresent, startedAt, endAt FROM Education WHERE resumeIdx = ?;";
+        String getEduQuery = "SELECT educationIdx, name AS university, major, study, isPresent, startedAt, endAt FROM Education WHERE resumeIdx = ? AND Education.status = 'ACTIVE';";
 
         List<Education> educationList = this.jdbcTemplate.query(getEduQuery,
                 (rs,rowNum)-> new Education(
@@ -124,7 +128,7 @@ public class ResumeDao {
 
         // Award
 
-        String getAwardQuery = "SELECT awardsIdx,createdAt,title,content FROM Awards WHERE resumeIdx = ?;";
+        String getAwardQuery = "SELECT awardsIdx,createdAt,title,content FROM Awards WHERE resumeIdx = ? AND Awards.status = 'ACTIVE';";
 
         List<Award> awardList = this.jdbcTemplate.query(getAwardQuery,
                 (rs,rowNum)-> new Award(
@@ -138,7 +142,7 @@ public class ResumeDao {
         //ForeignLanguage
 
         String getFLanguageQuery = "SELECT flIdx, L.nation AS language, level FROM ForeignLanguage AS FL\n" +
-                "                            JOIN Language AS L ON FL.languageIdx = L.languageIdx WHERE resumeIdx = ?;";
+                "                            JOIN Language AS L ON FL.languageIdx = L.languageIdx WHERE resumeIdx = ? AND FL.status = 'ACTIVE';";
 
         List<ForeignLanguage> foreignLanguageList = this.jdbcTemplate.query(getFLanguageQuery,
                 (rs,rowNum)-> new ForeignLanguage(
@@ -151,7 +155,7 @@ public class ResumeDao {
 
         String getTestQuery = "\n" +
                 "SELECT T.flIdx ,testIdx,title,score,createdAt FROM Test AS T\n" +
-                "JOIN ForeignLanguage AS FL ON FL.flIdx = T.flIdx WHERE FL.resumeIdx = ?;";
+                "JOIN ForeignLanguage AS FL ON FL.flIdx = T.flIdx WHERE FL.resumeIdx = ? AND T.status = 'ACTIVE';";
 
         List<LanguageTest> languageTestList = this.jdbcTemplate.query(getTestQuery,
                 (rs,rowNum)-> new LanguageTest(
@@ -165,7 +169,7 @@ public class ResumeDao {
 
         // Link
 
-        String getLinkQuery = "SELECT linkIdx,url AS linkUrl FROM Link WHERE resumeIdx = ?;";
+        String getLinkQuery = "SELECT linkIdx,url AS linkUrl FROM Link WHERE resumeIdx = ? AND Link.status = 'ACTIVE' ;";
 
         List<ResumeLink> resumeLinkList = this.jdbcTemplate.query(getLinkQuery,
                 (rs,rowNum) -> new ResumeLink(
@@ -177,4 +181,68 @@ public class ResumeDao {
         return new GetResumeDetailRes(resumeIntro,careerList,careerResultList,educationList,resumeSkillList,awardList,foreignLanguageList,languageTestList,resumeLinkList);
 
     }
+
+    // 이력서 생성
+
+    public int createResume(int userIdx){
+
+        String getTitleQuery ="SELECT CONCAT((SELECT name FROM User WHERE User.userIdx =?),(SELECT COUNT(resumeIdx)+1 FROM Resume WHERE userIdx = ? AND Resume.status = 'ACTIVE')) AS title;";
+
+        Object[] createTitleParams = new Object[]{userIdx,userIdx};
+
+        String title = this.jdbcTemplate.queryForObject(getTitleQuery,
+                (rs,rowNum)-> new String(
+                        rs.getString("title")),
+                createTitleParams);
+
+        String createResumeQuery = "INSERT INTO Resume(Resume.userIdx,title) VALUES (?,?);";
+        Object[] createResumeParams = new Object[]{userIdx,title};
+        this.jdbcTemplate.update(createResumeQuery, createResumeParams);
+
+        String lastInsertIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+
+
+    }
+
+    // 이력서 각 테이블(요소) 생성(empty)
+
+    public int createResumeTable(ResumeTable resumeTable,int Idx) throws BaseException{
+
+
+        String tableName = resumeTable.getTableName();
+        String keyName = resumeTable.getParentKey();
+
+        String createResumeTableQuery = " INSERT INTO " + tableName + " (" + keyName + ") VALUES (?);" ;
+
+        if(this.jdbcTemplate.update(createResumeTableQuery,Idx)==0){
+            throw new BaseException(CREATE_FAIL_RESUMETABLE);
+        }
+        String lastInsertQuery = "SELECT last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertQuery,int.class);
+    }
+
+
+    // 이력서 각 테이블(요소) 삭제하기
+
+    public int deleteResumeTable(ResumeTable resumeTable, int Idx) throws BaseException {
+        String tableName = resumeTable.getTableName();
+        String primaryKey = resumeTable.getPrimaryKey();
+        System.out.println("삭제하기 메서드");
+        String deleteResumeTableQuery = " UPDATE " + tableName + " SET status = 'DELETE' WHERE " + primaryKey + " = ?";
+   //     UPDATE Career SET Career.status = 'DELETE' WHERE careerIdx =?;
+        return this.jdbcTemplate.update(deleteResumeTableQuery,Idx);
+    }
+
+
+
+    // 해당 인덱스의 이력서가 있는지 확인합니다.
+//    public int checkResume(int resumeIdx) throws BaseException{
+//        String checkResumeQuery = "SELECT EXISTS(SELECT resumeIdx FROM Resume WHERE resumeIdx = ?)";
+//        System.out.println("checkResume");
+//        int checkResumeParams = resumeIdx;
+//        return this.jdbcTemplate.queryForObject(checkResumeQuery,
+//                int.class,
+//                checkResumeParams);
+//    }
 }

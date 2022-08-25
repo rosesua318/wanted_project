@@ -1,6 +1,7 @@
 package com.example.demo.src.resume.model;
 
 
+import com.example.demo.src.wanted.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LanguageTest {
-
 
 
 
