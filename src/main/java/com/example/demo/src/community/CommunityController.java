@@ -2,6 +2,7 @@ package com.example.demo.src.community;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.community.model.GetOtherOpenRes;
 import com.example.demo.src.community.model.GetOtherRes;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,13 @@ public class CommunityController {
     /**
      * 커뮤니티 그외 탭 조회 (비회원용) API
      * [GET] /communities
-     * @return BaseResponse<GetOtherRes>
+     * @return BaseResponse<GetOtherOpenRes>
      */
     @ResponseBody
     @GetMapping()
-    public BaseResponse<GetOtherRes> getOtherTabOpen(@RequestParam(name="ctIdx") int ctIdx) throws BaseException {
+    public BaseResponse<GetOtherOpenRes> getOtherTabOpen(@RequestParam(name="ctIdx") int ctIdx) throws BaseException {
         try {
-            GetOtherRes getOtherRes = communityProvider.getOtherTabOpen(ctIdx);
+            GetOtherOpenRes getOtherRes = communityProvider.getOtherTabOpen(ctIdx);
             return new BaseResponse<>(getOtherRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

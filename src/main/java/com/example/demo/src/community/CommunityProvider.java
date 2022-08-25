@@ -1,6 +1,7 @@
 package com.example.demo.src.community;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.community.model.GetOtherOpenRes;
 import com.example.demo.src.community.model.GetOtherRes;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,7 @@ public class CommunityProvider {
         this.communityDao = communityDao;
     }
 
-    public GetOtherRes getOtherTabOpen(int ctIdx) throws BaseException {
+    public GetOtherOpenRes getOtherTabOpen(int ctIdx) throws BaseException {
         try {
             return communityDao.getOtherTabOpen(ctIdx);
         } catch (Exception exception){

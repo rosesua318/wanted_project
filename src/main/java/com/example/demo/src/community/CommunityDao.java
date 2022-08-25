@@ -1,8 +1,6 @@
 package com.example.demo.src.community;
 
-import com.example.demo.src.community.model.CommunityTag;
-import com.example.demo.src.community.model.GetOtherRes;
-import com.example.demo.src.community.model.Posting;
+import com.example.demo.src.community.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,7 +17,7 @@ public class CommunityDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public GetOtherRes getOtherTabOpen(int ctIdx) {
+    public GetOtherOpenRes getOtherTabOpen(int ctIdx) {
         String getTagQuery = "select ctIdx, name from CommunityTag";
 
         List<CommunityTag> communityTags = this.jdbcTemplate.query(getTagQuery,
@@ -64,10 +62,26 @@ public class CommunityDao {
 
 
 
-        return new GetOtherRes(ctIdx, communityTags, postingList);
+        return new GetOtherOpenRes(ctIdx, communityTags, postingList);
     }
 
     public GetOtherRes getOtherTab(int userIdx, int ctIdx) {
+        String getUserQuery = "select u.userIdx, u.imageUrl, case when u.isNickname = 0 then u.name else u.nickname end as myName, " +
+                "ec.category as myJob, case when s.career = 0 then '신입' else concat(s.career, '년차') end as myCareer " +
+                "from User u JOIN Specialty s ON u.userIdx = s.userIdx " +
+                "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
+                "where u.userIdx = ?";
+        String getUserParams = String.valueOf(userIdx);
+
+        MyUser user = this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new MyUser(
+                        rs.getInt("userIdx"),
+                        rs.getString("imageUrl"),
+                        rs.getString("myName"),
+                        rs.getString("myJob"),
+                        rs.getString("myCareer")
+                ), getUserParams);
+
         String getTagQuery = "select ctIdx, name from CommunityTag";
 
         List<CommunityTag> communityTags = this.jdbcTemplate.query(getTagQuery,
@@ -114,6 +128,6 @@ public class CommunityDao {
 
 
 
-        return new GetOtherRes(ctIdx, communityTags, postingList);
+        return new GetOtherRes(user, ctIdx, communityTags, postingList);
     }
 }
