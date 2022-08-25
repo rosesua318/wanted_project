@@ -64,4 +64,20 @@ public class CommunityProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public GetPostingOpenRes getPostingOpen(int postingIdx) throws BaseException {
+        try {
+            return communityDao.getPostingOpen(postingIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetPostingRes getPosting(int postingIdx, int userIdx) throws BaseException {
+        try {
+            return communityDao.getPosting(postingIdx, userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

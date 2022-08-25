@@ -471,4 +471,155 @@ public class CommunityDao {
 
         return new GetRecommRes(user, 1, communityTags, recommTag, postingList);
     }
+
+    public GetPostingOpenRes getPostingOpen(int postingIdx) {
+        String getPostingQuery = "select p.postingIdx, u.userIdx, u.imageUrl as profileUrl, " +
+                "case when u.isNickname = 0 " +
+                "then u.name else u.nickname end as name, ec.category as job, " +
+                "case when s.career " +
+                "= 0 then '신입' else concat(s.career, '년차') end as career, " +
+                "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
+                "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
+                "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
+                "JOIN Specialty s ON u.userIdx = s.userIdx " +
+                "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
+                "where p.postingIdx = ? ";
+        String getPostingParams = String.valueOf(postingIdx);
+        PostingMore posting = this.jdbcTemplate.queryForObject(getPostingQuery,
+                (rs, rowNum) -> new PostingMore(
+                        rs.getInt("postingIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("profileUrl"),
+                        rs.getString("name"),
+                        rs.getString("job"),
+                        rs.getString("career"),
+                        rs.getString("date"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("imageUrl"),
+                        0,
+                        rs.getInt("likeNum"),
+                        0,
+                        rs.getInt("commentNum")
+                ), getPostingParams);
+
+        String getQuery = "select ct.ctIdx, ct.name from Posting p JOIN PostingTag pt ON pt.postingIdx = p.postingIdx " +
+                "JOIN CommunityTag ct ON ct.ctIdx = pt.ctIdx where p.postingIdx = ? and pt.ctIdx != 2";
+        String getParams = String.valueOf(posting.getPostingIdx());
+        List<CommunityTag> tags = this.jdbcTemplate.query(getQuery,
+                (rs, rowNum) -> new CommunityTag(
+                        rs.getInt("ctIdx"),
+                        rs.getString("name")
+                ), getParams);
+
+        posting.setTags(tags);
+
+        String getCommentQuery = "select c.commentIdx, u.userIdx, u.imageUrl as profileUrl, " +
+                "case when u.isNickname = 0 " +
+                "then u.name else u.nickname end as name, " +
+                "case when timestampdiff(hour, c.createdAt, now()) < 1 then concat(timestampdiff(minute, c.createdAt, now()), '분 전') " +
+                "else case when datediff(now(), c.createdAt) >= 1 then date_format(c.createdAt, '%Y.%m.%d') " +
+                "else concat(timestampdiff(hour, c.createdAt, now()), '시간 전') end end as date, c.content " +
+                "from Comment c JOIN Posting p ON c.postingIdx = p.postingIdx JOIN User u ON c.userIdx = u.userIdx " +
+                "where c.postingIdx = ? " +
+                "ORDER BY c.createdAt ASC";
+        String getCommentParams = String.valueOf(postingIdx);
+        List<Comment> commentList = this.jdbcTemplate.query(getCommentQuery,
+                (rs, rowNum) -> new Comment(
+                        rs.getInt("commentIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("profileUrl"),
+                        rs.getString("name"),
+                        rs.getString("date"),
+                        rs.getString("content")
+                ), getCommentParams);
+
+
+        return new GetPostingOpenRes(posting, commentList);
+    }
+
+    public GetPostingRes getPosting(int postingIdx, int userIdx) {
+        String getPostingQuery = "select p.postingIdx, u.userIdx, u.imageUrl as profileUrl, " +
+                "case when u.isNickname = 0 " +
+                "then u.name else u.nickname end as name, ec.category as job, " +
+                "case when s.career " +
+                "= 0 then '신입' else concat(s.career, '년차') end as career, " +
+                "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
+                "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
+                "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
+                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?) as isLike, " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
+                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?) as isComment, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
+                "JOIN Specialty s ON u.userIdx = s.userIdx " +
+                "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
+                "where p.postingIdx = ? ";
+        Object[] getPostingParams = new Object[]{userIdx, userIdx, postingIdx};
+        PostingMore posting = this.jdbcTemplate.queryForObject(getPostingQuery,
+                (rs, rowNum) -> new PostingMore(
+                        rs.getInt("postingIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("profileUrl"),
+                        rs.getString("name"),
+                        rs.getString("job"),
+                        rs.getString("career"),
+                        rs.getString("date"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("imageUrl"),
+                        rs.getInt("isLike"),
+                        rs.getInt("likeNum"),
+                        rs.getInt("isComment"),
+                        rs.getInt("commentNum")
+                ), getPostingParams);
+
+        String getQuery = "select ct.ctIdx, ct.name from Posting p JOIN PostingTag pt ON pt.postingIdx = p.postingIdx " +
+                "JOIN CommunityTag ct ON ct.ctIdx = pt.ctIdx where p.postingIdx = ? and pt.ctIdx != 2";
+        String getParams = String.valueOf(posting.getPostingIdx());
+        List<CommunityTag> tags = this.jdbcTemplate.query(getQuery,
+                (rs, rowNum) -> new CommunityTag(
+                        rs.getInt("ctIdx"),
+                        rs.getString("name")
+                ), getParams);
+
+        posting.setTags(tags);
+
+        String getCommentQuery = "select c.commentIdx, u.userIdx, u.imageUrl as profileUrl, " +
+                "case when u.isNickname = 0 " +
+                "then u.name else u.nickname end as name, " +
+                "case when timestampdiff(hour, c.createdAt, now()) < 1 then concat(timestampdiff(minute, c.createdAt, now()), '분 전') " +
+                "else case when datediff(now(), c.createdAt) >= 1 then date_format(c.createdAt, '%Y.%m.%d') " +
+                "else concat(timestampdiff(hour, c.createdAt, now()), '시간 전') end end as date, c.content " +
+                "from Comment c JOIN Posting p ON c.postingIdx = p.postingIdx JOIN User u ON c.userIdx = u.userIdx " +
+                "where c.postingIdx = ? " +
+                "ORDER BY c.createdAt ASC";
+        String getCommentParams = String.valueOf(postingIdx);
+        List<Comment> commentList = this.jdbcTemplate.query(getCommentQuery,
+                (rs, rowNum) -> new Comment(
+                        rs.getInt("commentIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("profileUrl"),
+                        rs.getString("name"),
+                        rs.getString("date"),
+                        rs.getString("content")
+                ), getCommentParams);
+
+        String getUserQuery = "select u.userIdx, u.imageUrl, case when u.isNickname = 0 " +
+                "then u.name else u.nickname end as name from User u where u.userIdx = ?";
+        String getUserParams = String.valueOf(userIdx);
+
+        DetailUser detailUser = this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new DetailUser(
+                        rs.getInt("userIdx"),
+                        rs.getString("imageUrl"),
+                        rs.getString("name")
+                ), getUserParams);
+
+
+        return new GetPostingRes(posting, commentList, detailUser);
+    }
 }
