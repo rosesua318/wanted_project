@@ -2,10 +2,7 @@ package com.example.demo.src.community;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.community.model.GetAllOpenRes;
-import com.example.demo.src.community.model.GetAllRes;
-import com.example.demo.src.community.model.GetOtherOpenRes;
-import com.example.demo.src.community.model.GetOtherRes;
+import com.example.demo.src.community.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -100,6 +97,44 @@ public class CommunityController {
             }
             GetAllRes getAllRes = communityProvider.getAllTab(userIdx);
             return new BaseResponse<>(getAllRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 추천 탭 조회 (비회원용) API
+     * [GET] /communities/recommends
+     * @return BaseResponse<GetRecommOpenRes>
+     */
+    @ResponseBody
+    @GetMapping("/recommends")
+    public BaseResponse<GetRecommOpenRes> getRecommTabOpen() throws BaseException {
+        try {
+            GetRecommOpenRes getRecommRes = communityProvider.getRecommTabOpen();
+            return new BaseResponse<>(getRecommRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 추천 탭 조회 (회원용) API
+     * [GET] /communities/recommends/:userIdx
+     * @return BaseResponse<GetRecommRes>
+     */
+    @ResponseBody
+    @GetMapping("/recommends/{userIdx}")
+    public BaseResponse<GetRecommRes> getRecommTab(@PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetRecommRes getRecommRes = communityProvider.getRecommTab(userIdx);
+            return new BaseResponse<>(getRecommRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
