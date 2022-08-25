@@ -7,8 +7,6 @@ import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 
 @RestController
@@ -19,10 +17,14 @@ public class CommunityController {
     private final CommunityProvider communityProvider;
 
     @Autowired
+    private final CommunityService communityService;
+
+    @Autowired
     private final JwtService jwtService;
 
-    public CommunityController(CommunityProvider communityProvider, JwtService jwtService) {
+    public CommunityController(CommunityProvider communityProvider, CommunityService communityService, JwtService jwtService) {
         this.communityProvider = communityProvider;
+        this.communityService = communityService;
         this.jwtService = jwtService;
     }
 
@@ -173,6 +175,50 @@ public class CommunityController {
             }
             GetPostingRes getPostingRes = communityProvider.getPosting(postingIdx, userIdx);
             return new BaseResponse<>(getPostingRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 프로필 설정 조회 API
+     * [GET] /communities/profiles/:userIdx
+     * @return BaseResponse<GetProfileRes>
+     */
+    @ResponseBody
+    @GetMapping("/profiles/{userIdx}")
+    public BaseResponse<GetProfileRes> getProfile(@PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetProfileRes getProfileRes = communityProvider.getProfile(userIdx);
+            return new BaseResponse<>(getProfileRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 프로필 설정 조회 API
+     * [GET] /communities/profiles/:userIdx
+     * @return BaseResponse<GetProfileRes>
+     */
+    @ResponseBody
+    @PatchMapping("/profiles/{userIdx}")
+    public BaseResponse<String> getProfile(@PathVariable("userIdx") int userIdx, @RequestBody PatchProfileReq patchProfileReq) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            communityService.setProfile(userIdx, patchProfileReq);
+            return new BaseResponse<>("변경 되었습니다.");
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }

@@ -622,4 +622,26 @@ public class CommunityDao {
 
         return new GetPostingRes(posting, commentList, detailUser);
     }
+
+    public GetProfileRes getProfile(int userIdx) {
+        String getProfileQuery = "select u.userIdx, u.imageUrl, u.name, u.isNickname, case when u.nickname is null then '' else u.nickname end as nickname from User u where u.userIdx = ?";
+        String getProfileParams = String.valueOf(userIdx);
+
+        return this.jdbcTemplate.queryForObject(getProfileQuery,
+                (rs, rowNum) -> new GetProfileRes(
+                        rs.getInt("userIdx"),
+                        rs.getString("imageUrl"),
+                        rs.getString("name"),
+                        rs.getInt("u.isNickname"),
+                        rs.getString("nickname")
+                ), getProfileParams);
+
+    }
+
+    public void setProfile(int userIdx, PatchProfileReq patchProfileReq) {
+        String setProfileQuery = "update User set isNickname = ?, nickname = ? where userIdx = ?";
+        Object[] setProfileParams = new Object[]{patchProfileReq.getIsNickname(), patchProfileReq.getNickname(), userIdx};
+
+        this.jdbcTemplate.update(setProfileQuery, setProfileParams);
+    }
 }

@@ -80,4 +80,12 @@ public class CommunityProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public GetProfileRes getProfile(int userIdx) throws BaseException {
+        try {
+            return communityDao.getProfile(userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
