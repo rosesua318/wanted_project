@@ -103,6 +103,8 @@ public enum BaseResponseStatus {
     DELETE_FAIL_RESUMETABLE(false,4017,"이력서  테이블(요소) 삭제에 실패하였습니다."),
 
     MODIFY_FAIL_USER_IMAGE(false,4018,"유저 프로필 이미지 변경 실패하였습니다."),
+
+    CREATE_FAIL_APPLICANT(false,4019, "지원하기에 실패했습니다."),
     MODIFY_FAIL_BOOKMARK_STATUS(false,4030,"북마크 삭제에 실패하였습니다."),
 
     MODIFY_FAIL_RESUMETABLE_STATUS(false,4031,"이력서 테이블 삭제에 실패하였습니다."),

@@ -12,6 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PostApplicationReq {
 
+    private int userIdx;
+    private int employmentIdx;
+
     private String name;
     private String email;
     private String phone;

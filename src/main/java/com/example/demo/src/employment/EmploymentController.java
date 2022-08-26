@@ -5,6 +5,7 @@ import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.employment.model.GetEmpDetailRes;
 import com.example.demo.src.employment.model.GetEmpHomeRes;
+import com.example.demo.src.employment.model.PostApplicationReq;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,18 +96,24 @@ public class EmploymentController {
      * 지원하기
      */
 
-//    @ResponseBody
-//    @PostMapping("/{userIdx}/{employmentIdx}")
-//    public BaseResponse<String> createApplicant(@PathVariable("userIdx") int userIdx, @PathVariable("employmentIdx") int employmentIdx,@RequestBody){
-//        try{
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-//
-//        }
-//    }
+    @ResponseBody
+    @PostMapping("/{userIdx}/{employmentIdx}")
+    public BaseResponse<String> createApplicant(@PathVariable("userIdx") int userIdx, @PathVariable("employmentIdx") int employmentIdx, @RequestBody PostApplicationReq postApplicationReq){
+        try{
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            int applicantIdx = employmentService.createApplicant(postApplicationReq);
+            String result = "지원 완료 ApplicantIdx : " + applicantIdx;
+
+            return new BaseResponse<>(result);
+        }catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 }

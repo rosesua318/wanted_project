@@ -1,5 +1,6 @@
 package com.example.demo.src.employment;
 
+import com.example.demo.config.BaseException;
 import com.example.demo.src.company.model.CompanyEmpInfo;
 import com.example.demo.src.company.model.GetCompanyInfoRes;
 import com.example.demo.src.employment.model.*;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.CREATE_FAIL_APPLICANT;
+import static com.example.demo.config.BaseResponseStatus.CREATE_FAIL_RESUMETABLE;
 
 @Repository
 public class EmploymentDao {
@@ -288,6 +292,18 @@ public class EmploymentDao {
                 );
 
         return new GetEmpDetailRes(employmentImgList,companyEmpInfo,tag,empDetail,skill);
+    }
 
+    // 지원하기
+
+    public int createApplicant(PostApplicationReq app) throws BaseException{
+        String createApplicantQuery = "INSERT INTO Application (state, employmentIdx, userIdx, name, email, phone, resumeIdx) VALUES (?,?,?,?,?,?,?);";
+        Object[] createApplicantParams = new Object[]{1,app.getEmploymentIdx(),app.getUserIdx(),app.getName(),app.getEmail(),app.getPhone(),app.getResumeIdx()};
+
+        if(this.jdbcTemplate.update(createApplicantQuery,createApplicantParams)==0){
+            throw new BaseException(CREATE_FAIL_APPLICANT);
+        }
+        String lastInsertQuery = "SELECT last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertQuery,int.class);
     }
 }
