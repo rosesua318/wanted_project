@@ -17,6 +17,13 @@ public class CommunityProvider {
         this.communityDao = communityDao;
     }
 
+    public int checkPosting(int userIdx, int postingIdx) throws BaseException {
+        try{
+            return communityDao.checkPosting(userIdx, postingIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     public GetOtherOpenRes getOtherTabOpen(int ctIdx) throws BaseException {
         try {
             return communityDao.getOtherTabOpen(ctIdx);

@@ -41,4 +41,12 @@ public class CommunityService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public void deletePosting(int userIdx, int postingIdx) throws BaseException {
+        try {
+            communityDao.deletePosting(userIdx, postingIdx);
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
