@@ -17,6 +17,19 @@ public class CommunityDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public int checkPosting(int userIdx, int postingIdx) {
+        String checkQuery = "select exists(select postingIdx from Posting where userIdx = ? and postingIdx = ?)";
+        Object[] checkParams = new Object[]{userIdx, postingIdx};
+        return this.jdbcTemplate.queryForObject(checkQuery,
+                int.class,
+                checkParams);
+    }
+
+    public void deletePosting(int userIdx, int postingIdx) {
+        String deleteQuery = "update Posting set status = 'INACTIVE' where userIdx=? and postingIdx = ?";
+        Object[] deleteParams = new Object[]{userIdx, postingIdx};
+        this.jdbcTemplate.update(deleteQuery, deleteParams);
+    }
     public GetOtherOpenRes getOtherTabOpen(int ctIdx) {
         String getTagQuery = "select ctIdx, name from CommunityTag";
 

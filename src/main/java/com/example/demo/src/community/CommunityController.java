@@ -213,13 +213,13 @@ public class CommunityController {
     }
 
     /**
-     * 커뮤니티 프로필 설정 조회 API
-     * [GET] /communities/profiles/:userIdx
-     * @return BaseResponse<GetProfileRes>
+     * 커뮤니티 프로필 설정 API
+     * [PATCH] /communities/profiles/:userIdx
+     * @return BaseResponse<String>
      */
     @ResponseBody
     @PatchMapping("/profiles/{userIdx}")
-    public BaseResponse<String> getProfile(@PathVariable("userIdx") int userIdx, @RequestBody PatchProfileReq patchProfileReq) throws BaseException {
+    public BaseResponse<String> setProfile(@PathVariable("userIdx") int userIdx, @RequestBody PatchProfileReq patchProfileReq) throws BaseException {
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -280,6 +280,32 @@ public class CommunityController {
             return new BaseResponse<>((exception.getStatus()));
         } catch (IOException exception) {
             return new BaseResponse<>(FAIL_IMAGE_UPLOAD);
+        }
+    }
+
+    /**
+     * 커뮤니티 게시글 삭제 API
+     * [PATCH] /communities/:userIdx
+     * @return BaseResponse<GetProfileRes>
+     */
+    @ResponseBody
+    @PatchMapping("/{userIdx}")
+    public BaseResponse<String> deletePosting(@PathVariable("userIdx") int userIdx, @RequestBody PatchPostingReq patchPostingReq) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            if(communityProvider.checkPosting(userIdx, patchPostingReq.getPostingIdx()) != 0) {
+                communityService.deletePosting(userIdx, patchPostingReq.getPostingIdx());
+                return new BaseResponse<>("삭제되었습니다.");
+            } else {
+                return new BaseResponse<>(PATCH_POSTING_NO_DATA);
+            }
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
         }
     }
 }
