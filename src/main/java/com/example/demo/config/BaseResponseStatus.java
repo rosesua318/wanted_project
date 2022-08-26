@@ -41,6 +41,8 @@ public enum BaseResponseStatus {
 
     POST_USERS_INVALID_PASSWORD(false,2022,"비밀번호는 특수문자,문자,숫자 포함 8~20자리만 가능합니다."),
 
+    INVALID_USER_INACTIVE(false,2023,"탈퇴한 회원이거나 정보가 없는 회원입니다."),
+
 
 
 
@@ -93,6 +95,8 @@ public enum BaseResponseStatus {
     CREATE_FAIL_RESUMETABLE(false,4016,"이력서 테이블(요소) 생성에 실패하였습니다."),
 
     DELETE_FAIL_RESUMETABLE(false,4017,"이력서  테이블(요소) 삭제에 실패하였습니다."),
+
+    MODIFY_FAIL_USER_IMAGE(false,4018,"유저 프로필 이미지 변경 실패하였습니다."),
     MODIFY_FAIL_BOOKMARK_STATUS(false,4030,"북마크 삭제에 실패하였습니다."),
 
     MODIFY_FAIL_RESUMETABLE_STATUS(false,4031,"이력서 테이블 삭제에 실패하였습니다."),
@@ -114,6 +118,8 @@ public enum BaseResponseStatus {
     UPDATE_FAIL_AWARD(false,4049,"이력서 수상 작성에 실패하였습니다."),
 
     DELETE_FAIL_RESUME(false,4050,"이력서 삭제에 실패했습니다."),
+
+    MODIFY_FAIL_USER_PRIVATE(false,4051,"계정 상태 변경에 실패했습니다.(비공개/공개)"),
 
 
 

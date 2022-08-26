@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import javax.xml.xpath.XPath;
 import java.util.List;
 
 @Repository
@@ -139,5 +140,31 @@ public class UserDao {
 
         return this.jdbcTemplate.update(modfiyPwdQuery,modifyPwdParams);
     }
+
+
+    // 유저 검증 (jwt 이외에 유저인덱스 검증)
+    public int checkUser(int userIdx) {
+        String checkUserQuery = "SELECT userIdx FROM User WHERE userIdx = ? AND status = 'ACTIVE'";
+        return this.jdbcTemplate.queryForObject(checkUserQuery, int.class, userIdx);
+
+    }
+
+    // 프로필 이미지 변경
+    public int modifyUserImage(PatchUserImage patchUserImage){
+        String modifyUserImageQuery = "UPDATE User SET imageUrl =? WHERE userIdx = ?";
+        Object[] modifyUserImageParams = new Object[]{patchUserImage.getImageUrl(),patchUserImage.getUserIdx()};
+
+        return this.jdbcTemplate.update(modifyUserImageQuery,modifyUserImageParams);
+    }
+
+    // 비공개,공개 계정 설정
+
+    public int modifyUserIsPrivate(PatchUserPrivate patchUserPrivate){
+        String modifyUserImageQuery = "UPDATE User SET isPrivate =? WHERE userIdx = ?";
+        Object[] modifyUserImageParams = new Object[]{patchUserPrivate.getIsPrivate(),patchUserPrivate.getUserIdx()};
+
+        return this.jdbcTemplate.update(modifyUserImageQuery,modifyUserImageParams);
+    }
+
 
 }
