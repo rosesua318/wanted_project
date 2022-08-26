@@ -14,7 +14,7 @@ public class GetLikeRes {
     private String companyName;
     private String nation;
     private String region;
-    private String reward;
+    private int reward;
 
     public GetLikeRes(int employmentIdx, String employment, String companyName) {
         this.employmentIdx = employmentIdx;

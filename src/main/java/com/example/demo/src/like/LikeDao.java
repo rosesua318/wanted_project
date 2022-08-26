@@ -96,7 +96,7 @@ public class LikeDao {
                             rs.getString("recommender")),
                     getRewardParams);
             int reward = Integer.parseInt(getRewardRes.getApplicant()) + Integer.parseInt(getRewardRes.getRecommender());
-            g.setReward("채용보상금 " + String.valueOf(reward) + "원");
+            g.setReward(reward);
         }
 
         return getLikeRes;

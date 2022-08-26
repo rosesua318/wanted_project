@@ -14,7 +14,7 @@ public class Employment {
     private String companyName;
     private String region;
     private String nation;
-    private String reward;
+    private int reward;
     private int isBookmark;
 
     public Employment(int employmentIdx, String title, String companyName, String region, String nation) {

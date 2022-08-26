@@ -43,3 +43,4 @@ secrets.yml
 .idea/misc.xml
 out/
 .idea/
+resources/aws.yml

@@ -19,7 +19,7 @@ public class CompanyEmp {
     private String employment;
 
     // 3. 채용 보상금
-    private String compensation;
+    private int compensation;
 
     // 4. 마감일
     private String deadline;
@@ -29,7 +29,7 @@ public class CompanyEmp {
 
 
 
-    public CompanyEmp(int employmentIdx, String employment, String compensation, String deadline){
+    public CompanyEmp(int employmentIdx, String employment, int compensation, String deadline){
         this.employmentIdx = employmentIdx;
         this.employment = employment;
         this.compensation = compensation;

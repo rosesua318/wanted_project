@@ -41,9 +41,15 @@ public enum BaseResponseStatus {
 
     POST_USERS_INVALID_PASSWORD(false,2022,"비밀번호는 특수문자,문자,숫자 포함 8~20자리만 가능합니다."),
 
+
     INVALID_USER_INACTIVE(false,2023,"탈퇴한 회원이거나 정보가 없는 회원입니다."),
 
+    POST_POSTING_NO_TITLE(false, 2101, "제목이 없습니다"),
+    POST_POSTING_NO_CONTENT(false, 2102, "내용이 없습니다"),
 
+    FAIL_IMAGE_UPLOAD(false, 2103, "이미지 업로드에 실패했습니다"),
+    
+    POST_POSTING_NO_TAG(false, 2104, "태그가 없습니다"),
 
 
     // [POST] / bookmark
