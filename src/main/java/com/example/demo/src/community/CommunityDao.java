@@ -25,9 +25,25 @@ public class CommunityDao {
                 checkParams);
     }
 
+    public int checkComment(int userIdx, int postingIdx, int commentIdx) {
+        String checkQuery = "select exists(select commentIdx from Comment where userIdx = ? and postingIdx = ? and commentIdx = ?)";
+        Object[] checkParams = new Object[]{userIdx, postingIdx, commentIdx};
+        return this.jdbcTemplate.queryForObject(checkQuery,
+                int.class,
+                checkParams);
+    }
+
     public int checkPostingActive(int userIdx, int postingIdx) {
         String checkQuery = "select exists(select postingIdx from Posting where userIdx = ? and postingIdx = ? and status='ACTIVE')";
         Object[] checkParams = new Object[]{userIdx, postingIdx};
+        return this.jdbcTemplate.queryForObject(checkQuery,
+                int.class,
+                checkParams);
+    }
+
+    public int checkPostingForComment(int postingIdx) {
+        String checkQuery = "select exists(select postingIdx from Posting where postingIdx = ? and status='ACTIVE')";
+        Object[] checkParams = new Object[]{postingIdx};
         return this.jdbcTemplate.queryForObject(checkQuery,
                 int.class,
                 checkParams);
@@ -41,6 +57,13 @@ public class CommunityDao {
         String resetTagParams = String.valueOf(postingIdx);
         this.jdbcTemplate.update(resetTagQuery, resetTagParams);
     }
+
+    public void deleteComment(int userIdx, int postingIdx, int commentIdx) {
+        String deleteQuery = "update Comment set status = 'INACTIVE' where userIdx=? and postingIdx = ? and commentIdx = ?";
+        Object[] deleteParams = new Object[]{userIdx, postingIdx, commentIdx};
+        this.jdbcTemplate.update(deleteQuery, deleteParams);
+    }
+
     public GetOtherOpenRes getOtherTabOpen(int ctIdx) {
         String getTagQuery = "select ctIdx, name from CommunityTag";
 
@@ -687,6 +710,15 @@ public class CommunityDao {
         }
 
         return new PostPostingRes(postingIdx);
+    }
+
+    public PostCommentRes createComment(int postingIdx, int userIdx, PostCommentReq postCommentReq) {
+        String createPostQuery = "insert into Comment (content, userIdx, postingIdx) VALUES(?,?,?)";
+        Object[] createPostParams = new Object[]{postCommentReq.getContent(), userIdx, postingIdx};
+        this.jdbcTemplate.update(createPostQuery, createPostParams);
+        String lastIdQuery = "select last_insert_id()";
+        int commentIdx = this.jdbcTemplate.queryForObject(lastIdQuery, int.class);
+        return new PostCommentRes(postingIdx, commentIdx);
     }
 
     public PutPostingRes updatePosting(int userIdx, PutPostingReq putPostingReq) {

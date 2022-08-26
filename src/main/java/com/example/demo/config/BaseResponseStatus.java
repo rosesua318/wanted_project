@@ -72,6 +72,12 @@ public enum BaseResponseStatus {
 
     PUT_POSTING_NO_DATA(false, 2106, "없는 게시글입니다."),
 
+    POST_COMMENT_NO_CONTENT(false, 2107, "댓글 내용이 없습니다."),
+
+    POST_POSTING_NO_DATA(false, 2108, "없는 게시글입니다."),
+
+    PATCH_COMMENT_NO_DATA(false, 2109, "없는 댓글입니다."),
+
     /**
      * 3000 : Response 오류
      */

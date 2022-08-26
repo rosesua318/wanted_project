@@ -32,6 +32,14 @@ public class CommunityService {
         }
     }
 
+    public PostCommentRes createComment(int postingIdx, int userIdx, PostCommentReq postCommentReq) throws BaseException {
+        try {
+            return communityDao.createComment(postingIdx, userIdx, postCommentReq);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public PutPostingRes updatePosting(int userIdx, PutPostingReq putPostingReq) throws BaseException {
         try {
             return communityDao.updatePosting(userIdx, putPostingReq);
@@ -59,6 +67,14 @@ public class CommunityService {
     public void deletePosting(int userIdx, int postingIdx) throws BaseException {
         try {
             communityDao.deletePosting(userIdx, postingIdx);
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void deleteComment(int userIdx, int postingIdx, int commentIdx) throws BaseException {
+        try {
+            communityDao.deleteComment(userIdx, postingIdx, commentIdx);
         } catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }

@@ -286,7 +286,7 @@ public class CommunityController {
     /**
      * 커뮤니티 게시글 삭제 API
      * [PATCH] /communities/:userIdx
-     * @return BaseResponse<GetProfileRes>
+     * @return BaseResponse<String>
      */
     @ResponseBody
     @PatchMapping("/{userIdx}")
@@ -362,6 +362,62 @@ public class CommunityController {
             return new BaseResponse<>((exception.getStatus()));
         } catch (IOException exception) {
             return new BaseResponse<>(FAIL_IMAGE_UPLOAD);
+        }
+    }
+
+
+    /**
+     * 커뮤니티 댓글 작성 API
+     * [POST] /communities/:postingIdx/:userIdx
+     * @return BaseResponse<PostCommentRes>
+     */
+    @ResponseBody
+    @PostMapping(value = "/{postingIdx}/{userIdx}")
+    public BaseResponse<PostCommentRes> createComment(@PathVariable("postingIdx") int postingIdx, @PathVariable("userIdx") int userIdx, @RequestBody PostCommentReq postCommentReq) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            if(postCommentReq.getContent().equals("")) {
+                return new BaseResponse<>(POST_COMMENT_NO_CONTENT);
+            }
+            if(communityProvider.checkPostingForComment(postingIdx) != 0) {
+                PostCommentRes postCommentRes = communityService.createComment(postingIdx, userIdx, postCommentReq);
+                return new BaseResponse<>(postCommentRes);
+            } else {
+                return new BaseResponse<>(POST_POSTING_NO_DATA);
+            }
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 댓글 삭제 API
+     * [PATCH] /communities/:postingIdx/:userIdx
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/{postingIdx}/{userIdx}")
+    public BaseResponse<String> deleteComment(@PathVariable("postingIdx") int postingIdx, @PathVariable("userIdx") int userIdx, @RequestBody PatchCommentReq patchCommentReq) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            if(communityProvider.checkComment(userIdx, postingIdx, patchCommentReq.getCommentIdx()) != 0) {
+                communityService.deleteComment(userIdx, postingIdx, patchCommentReq.getCommentIdx());
+                return new BaseResponse<>("삭제되었습니다.");
+            } else {
+                return new BaseResponse<>(PATCH_COMMENT_NO_DATA);
+            }
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
         }
     }
 }

@@ -25,9 +25,25 @@ public class CommunityProvider {
         }
     }
 
+    public int checkComment(int userIdx, int postingIdx, int commentIdx) throws BaseException {
+        try{
+            return communityDao.checkComment(userIdx, postingIdx, commentIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public int checkPostingActive(int userIdx, int postingIdx) throws BaseException {
         try{
             return communityDao.checkPostingActive(userIdx, postingIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkPostingForComment(int postingIdx) throws BaseException {
+        try{
+            return communityDao.checkPostingForComment(postingIdx);
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
