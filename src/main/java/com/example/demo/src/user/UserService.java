@@ -122,4 +122,46 @@ public class UserService {
         }
     }
 
+    // 프로필 이미지 변경
+
+    public void modifyUserImage(PatchUserImage patchUserImage) throws BaseException{
+
+        int userIdx = patchUserImage.getUserIdx();
+        try{
+            // userIdx 검증 (탈퇴한 회원이거나 등)
+            if(userIdx != userDao.checkUser(userIdx)){
+                throw new BaseException(INVALID_USER_INACTIVE);
+            }
+
+            int result = userDao.modifyUserImage(patchUserImage);
+            if(result ==0){
+                throw new BaseException(MODIFY_FAIL_USER_IMAGE);
+            }
+        }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
+    // 계정 공개,비공개 설정
+
+    public void modifyUserIsPrivate(PatchUserPrivate patchUserPrivate) throws BaseException{
+        int userIdx = patchUserPrivate.getUserIdx();
+
+        try{
+            // userIdx 검증 (탈퇴한 회원이거나 등)
+            if(userIdx != userDao.checkUser(userIdx)){
+                throw new BaseException(INVALID_USER_INACTIVE);
+            }
+
+            int result = userDao.modifyUserIsPrivate(patchUserPrivate);
+            if(result ==0){
+                throw new BaseException(MODIFY_FAIL_USER_PRIVATE);
+            }
+        }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
 }

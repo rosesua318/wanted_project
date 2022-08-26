@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
+
 @RestController
 @RequestMapping("/employments")
 public class EmploymentController {
@@ -88,5 +90,23 @@ public class EmploymentController {
         }
 
     }
+
+    /**
+     * 지원하기
+     */
+
+//    @ResponseBody
+//    @PostMapping("/{userIdx}/{employmentIdx}")
+//    public BaseResponse<String> createApplicant(@PathVariable("userIdx") int userIdx, @PathVariable("employmentIdx") int employmentIdx,@RequestBody){
+//        try{
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
+//
+//        }
+//    }
 
 }

@@ -231,8 +231,76 @@ public class UserController {
 
         } catch (BaseException exception){
             exception.printStackTrace();
-            return new BaseResponse<>((exception.getStatus()));
+            return new BaseResponse<>(exception.getStatus());
         }
     }
 
+    /**
+     * 프로필 이미지 변경
+     */
+
+    @ResponseBody
+    @PatchMapping("/profiles/{userIdx}")
+    public BaseResponse<String> modifyUserImage(@PathVariable ("userIdx") int userIdx, @RequestBody PatchUserImage patchUserImage){
+
+       try {
+           //jwt에서 idx 추출.
+
+           int userIdxByJwt = jwtService.getUserIdx();
+           //userIdx와 접근한 유저가 같은지 확인
+           if (userIdx != userIdxByJwt) {
+               return new BaseResponse<>(INVALID_USER_JWT);
+           }
+
+           // body의 유저인덱스와 파라미터 유저 인덱스 검증.
+           if (userIdx != patchUserImage.getUserIdx()){
+               return new BaseResponse<>(INVALID_USER_IDX);
+           }
+
+           userService.modifyUserImage(patchUserImage);
+           String result = "프로필 이미지가 변경되었습니다.";
+
+           return new BaseResponse<>(result);
+       }catch (BaseException exception) {
+           exception.printStackTrace();
+           return new BaseResponse<>(exception.getStatus());
+       }
+    }
+
+    /**
+     * 계정 공개,비공개 설정
+     */
+
+    @ResponseBody
+    @PatchMapping("/private/{userIdx}")
+    public BaseResponse<String> modifyUserIsPrivate(@PathVariable ("userIdx") int userIdx,@RequestBody PatchUserPrivate patchUserPrivate){
+
+        try{
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            // body,파라미터 유저 인덱스 검증
+            if (userIdx != patchUserPrivate.getUserIdx()){
+                return new BaseResponse<>(INVALID_USER_IDX);
+            }
+
+            userService.modifyUserIsPrivate(patchUserPrivate);
+
+            String result;
+            if(patchUserPrivate.getIsPrivate() == 0){
+               result = "공개 계정";
+            }
+            else
+                result = "비공개 계정";
+
+            return new BaseResponse<>(result);
+
+        }catch(BaseException exception){
+            exception.printStackTrace();
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }
