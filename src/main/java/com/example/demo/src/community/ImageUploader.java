@@ -27,11 +27,11 @@ public class ImageUploader {
     public String upload(MultipartFile multipartFile, String dirName) throws IOException{
         File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
 
-        return upload(uploadFile, dirName);
+        return upload(uploadFile, dirName, multipartFile.getOriginalFilename());
     }
     // S3로 파일 업로드하기
-    private String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();   // S3에 저장된 파일 이름
+    private String upload(File uploadFile, String dirName, String originalName) {
+        String fileName = dirName + "/" + UUID.randomUUID() + originalName; // S3에 저장된 파일 이름
         String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
         removeNewFile(uploadFile);
         return uploadImageUrl;
@@ -53,7 +53,7 @@ public class ImageUploader {
     }
 
     private Optional<File> convert(MultipartFile multipartFile) throws IOException{
-        File convertFile = new File(System.getProperty("user.dir") + "/" + multipartFile.getOriginalFilename());
+        File convertFile = new File(System.getProperty("user.dir") + "/" + UUID.randomUUID());
         // 바로 위에서 지정한 경로에 File이 생성됨 (경로가 잘못되었다면 생성 불가능)
         if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) { // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
