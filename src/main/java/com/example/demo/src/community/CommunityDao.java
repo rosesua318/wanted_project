@@ -25,10 +25,21 @@ public class CommunityDao {
                 checkParams);
     }
 
+    public int checkPostingActive(int userIdx, int postingIdx) {
+        String checkQuery = "select exists(select postingIdx from Posting where userIdx = ? and postingIdx = ? and status='ACTIVE')";
+        Object[] checkParams = new Object[]{userIdx, postingIdx};
+        return this.jdbcTemplate.queryForObject(checkQuery,
+                int.class,
+                checkParams);
+    }
+
     public void deletePosting(int userIdx, int postingIdx) {
         String deleteQuery = "update Posting set status = 'INACTIVE' where userIdx=? and postingIdx = ?";
         Object[] deleteParams = new Object[]{userIdx, postingIdx};
         this.jdbcTemplate.update(deleteQuery, deleteParams);
+        String resetTagQuery = "delete from PostingTag where postingIdx = ?";
+        String resetTagParams = String.valueOf(postingIdx);
+        this.jdbcTemplate.update(resetTagQuery, resetTagParams);
     }
     public GetOtherOpenRes getOtherTabOpen(int ctIdx) {
         String getTagQuery = "select ctIdx, name from CommunityTag";
@@ -678,6 +689,32 @@ public class CommunityDao {
         return new PostPostingRes(postingIdx);
     }
 
+    public PutPostingRes updatePosting(int userIdx, PutPostingReq putPostingReq) {
+        String updatePostQuery = "update Posting set title = ?, content = ? where postingIdx = ? and userIdx = ?";
+        Object[] updatePostParams = new Object[]{putPostingReq.getTitle(), putPostingReq.getContent(), putPostingReq.getPostingIdx(), userIdx};
+        this.jdbcTemplate.update(updatePostQuery, updatePostParams);
+
+        String checkPostQuery = "select postingIdx from Posting where postingIdx = ? and userIdx = ?";
+        Object[] checkPostParams = new Object[]{putPostingReq.getPostingIdx(), userIdx};
+        int postingIdx = this.jdbcTemplate.queryForObject(checkPostQuery, int.class, checkPostParams);
+
+        String resetTagQuery = "delete from PostingTag where postingIdx = ?";
+        String resetTagParams = String.valueOf(postingIdx);
+        this.jdbcTemplate.update(resetTagQuery, resetTagParams);
+
+        for(int tagIdx : putPostingReq.getTags()) {
+            String getTagQuery = "select ct.ctIdx from CommunityTag ct where ct.name = (select h.homecategory from HomeCategory h where h.homecategoryIdx = ?)";
+            String getTagParams = String.valueOf(tagIdx);
+            int t = this.jdbcTemplate.queryForObject(getTagQuery, int.class, getTagParams);
+
+            String createTagQuery = "insert into PostingTag (postingIdx, ctIdx) VALUES(?,?)";
+            Object[] createTagParams = new Object[]{postingIdx, t};
+            this.jdbcTemplate.update(createTagQuery, createTagParams);
+        }
+
+        return new PutPostingRes(postingIdx);
+    }
+
     public PostPostingRes createPostingWithImage(int userIdx, String imageUrl, PostPostingReq postPostingReq) {
         String createPostQuery = "insert into Posting (title, content, imageUrl, userIdx) VALUES(?,?,?,?)";
         Object[] createPostParams = new Object[]{postPostingReq.getTitle(), postPostingReq.getContent(), imageUrl, userIdx};
@@ -696,5 +733,31 @@ public class CommunityDao {
         }
 
         return new PostPostingRes(postingIdx);
+    }
+
+    public PutPostingRes updatePostingWithImage(int userIdx, String imageUrl, PutPostingReq putPostingReq) {
+        String updatePostQuery = "update Posting set title = ?, content = ?, imageUrl = ? where postingIdx = ? and userIdx = ?";
+        Object[] updatePostParams = new Object[]{putPostingReq.getTitle(), putPostingReq.getContent(), imageUrl, putPostingReq.getPostingIdx(), userIdx};
+        this.jdbcTemplate.update(updatePostQuery, updatePostParams);
+
+        String checkPostQuery = "select postingIdx from Posting where postingIdx = ? and userIdx = ?";
+        Object[] checkPostParams = new Object[]{putPostingReq.getPostingIdx(), userIdx};
+        int postingIdx = this.jdbcTemplate.queryForObject(checkPostQuery, int.class, checkPostParams);
+
+        String resetTagQuery = "delete from PostingTag where postingIdx = ?";
+        String resetTagParams = String.valueOf(postingIdx);
+        this.jdbcTemplate.update(resetTagQuery, resetTagParams);
+
+        for(int tagIdx : putPostingReq.getTags()) {
+            String getTagQuery = "select ct.ctIdx from CommunityTag ct where ct.name = (select h.homecategory from HomeCategory h where h.homecategoryIdx = ?)";
+            String getTagParams = String.valueOf(tagIdx);
+            int t = this.jdbcTemplate.queryForObject(getTagQuery, int.class, getTagParams);
+
+            String createTagQuery = "insert into PostingTag (postingIdx, ctIdx) VALUES(?,?)";
+            Object[] createTagParams = new Object[]{postingIdx, t};
+            this.jdbcTemplate.update(createTagQuery, createTagParams);
+        }
+
+        return new PutPostingRes(postingIdx);
     }
 }

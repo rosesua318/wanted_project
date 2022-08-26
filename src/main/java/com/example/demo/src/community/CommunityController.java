@@ -308,4 +308,60 @@ public class CommunityController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 커뮤니티 게시글 수정 API
+     * [PUT] /communities/:userIdx
+     * @return BaseResponse<PutPostingRes>
+     */
+    @ResponseBody
+    @PutMapping(value = "/{userIdx}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BaseResponse<PutPostingRes> updatePosting(@PathVariable("userIdx") int userIdx, @RequestParam(value = "image", required = false) MultipartFile multipartFile, @RequestParam("json") String json) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
+            PutPostingReq putPostingReq = objectMapper.readValue(json, new TypeReference<PutPostingReq>() {
+            });
+
+            if(communityProvider.checkPostingActive(userIdx, putPostingReq.getPostingIdx()) != 0) {
+                if(putPostingReq.getTags().size() < 1) {
+                    return new BaseResponse<>(POST_POSTING_NO_TAG);
+                }
+                if(putPostingReq.getTitle().equals("")) {
+                    return new BaseResponse<>(POST_POSTING_NO_TITLE);
+                }
+                if(putPostingReq.getContent().equals("")) {
+                    return new BaseResponse<>(POST_POSTING_NO_CONTENT);
+                }
+                System.out.println(multipartFile);
+                String imageUrl = "";
+                if(multipartFile != null) {
+                    if(!multipartFile.isEmpty()) {
+                        imageUrl = imageUploader.upload(multipartFile, "static");
+                    }
+                }
+
+                PutPostingRes putPostingRes;
+                if(imageUrl.equals("") || imageUrl.isEmpty()) {
+                    putPostingRes = communityService.updatePosting(userIdx, putPostingReq);
+                } else {
+                    putPostingRes = communityService.updatePostingWithImage(userIdx, imageUrl, putPostingReq);
+                }
+                return new BaseResponse<>(putPostingRes);
+            } else {
+                return new BaseResponse<>(PUT_POSTING_NO_DATA);
+            }
+
+
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        } catch (IOException exception) {
+            return new BaseResponse<>(FAIL_IMAGE_UPLOAD);
+        }
+    }
 }
