@@ -66,6 +66,10 @@ dependencies {
 
     implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
     implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+
+    //s3 의존성 설치
+    //compileOnly 'org.springframework.cloud:spring-cloud-starter-aws:2.2.5.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 

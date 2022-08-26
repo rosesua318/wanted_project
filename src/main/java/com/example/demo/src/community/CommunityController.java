@@ -4,10 +4,17 @@ import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.community.model.*;
 import com.example.demo.utils.JwtService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
+import java.io.IOException;
+
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/communities")
@@ -22,10 +29,13 @@ public class CommunityController {
     @Autowired
     private final JwtService jwtService;
 
-    public CommunityController(CommunityProvider communityProvider, CommunityService communityService, JwtService jwtService) {
+    private final ImageUploader imageUploader;
+
+    public CommunityController(CommunityProvider communityProvider, CommunityService communityService, JwtService jwtService, ImageUploader imageUploader) {
         this.communityProvider = communityProvider;
         this.communityService = communityService;
         this.jwtService = jwtService;
+        this.imageUploader = imageUploader;
     }
 
     /**
@@ -221,6 +231,55 @@ public class CommunityController {
             return new BaseResponse<>("변경 되었습니다.");
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 게시글 작성 API
+     * [POST] /communities/:userIdx
+     * @return BaseResponse<PostPostingRes>
+     */
+    @ResponseBody
+    @PostMapping(value = "/{userIdx}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BaseResponse<PostPostingRes> createPosting(@PathVariable("userIdx") int userIdx, @RequestParam(value = "image", required = false) MultipartFile multipartFile, @RequestParam("json") String json) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
+            PostPostingReq postPostingReq = objectMapper.readValue(json, new TypeReference<PostPostingReq>() {
+            });
+            if(postPostingReq.getTags().size() < 1) {
+                return new BaseResponse<>(POST_POSTING_NO_TAG);
+            }
+            if(postPostingReq.getTitle().equals("")) {
+                return new BaseResponse<>(POST_POSTING_NO_TITLE);
+            }
+            if(postPostingReq.getContent().equals("")) {
+                return new BaseResponse<>(POST_POSTING_NO_CONTENT);
+            }
+            System.out.println(multipartFile);
+            String imageUrl = "";
+            if(multipartFile != null) {
+                if(!multipartFile.isEmpty()) {
+                    imageUrl = imageUploader.upload(multipartFile, "static");
+                }
+            }
+
+            PostPostingRes postPostingRes;
+            if(imageUrl.equals("") || imageUrl.isEmpty()) {
+                postPostingRes = communityService.createPosting(userIdx, postPostingReq);
+            } else {
+                postPostingRes = communityService.createPostingWithImage(userIdx, imageUrl, postPostingReq);
+            }
+            return new BaseResponse<>(postPostingRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        } catch (IOException exception) {
+            return new BaseResponse<>(FAIL_IMAGE_UPLOAD);
         }
     }
 }
