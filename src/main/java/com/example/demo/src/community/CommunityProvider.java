@@ -49,6 +49,14 @@ public class CommunityProvider {
         }
     }
 
+    public int checkLikes(int userIdx, int postingIdx) throws BaseException{
+        try{
+            return communityDao.checkLikes(userIdx, postingIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public GetOtherOpenRes getOtherTabOpen(int ctIdx) throws BaseException {
         try {
             return communityDao.getOtherTabOpen(ctIdx);

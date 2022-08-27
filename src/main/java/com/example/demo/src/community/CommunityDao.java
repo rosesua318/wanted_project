@@ -49,6 +49,14 @@ public class CommunityDao {
                 checkParams);
     }
 
+    public int checkLikes(int userIdx, int postingIdx) {
+        String checkQuery = "select exists(select likePostIdx from LikePost where userIdx = ? and postingIdx = ?)";
+        Object[] checkParams = new Object[]{userIdx, postingIdx};
+        return this.jdbcTemplate.queryForObject(checkQuery,
+                int.class,
+                checkParams);
+    }
+
     public void deletePosting(int userIdx, int postingIdx) {
         String deleteQuery = "update Posting set status = 'INACTIVE' where userIdx=? and postingIdx = ?";
         Object[] deleteParams = new Object[]{userIdx, postingIdx};
@@ -792,4 +800,32 @@ public class CommunityDao {
 
         return new PutPostingRes(postingIdx);
     }
+
+    public int modifyLikes(int userIdx, int postingIdx) {
+        String modifyQuery = "update LikePost set status = 'ACTIVE' where userIdx=? and postingIdx = ?";
+        Object[] modifyParams = new Object[]{userIdx, postingIdx};
+        this.jdbcTemplate.update(modifyQuery,modifyParams);
+
+        String getQuery = "select likePostIdx from LikePost where userIdx=? and postingIdx = ?";
+        Object[] getParams = new Object[]{userIdx, postingIdx};
+        return this.jdbcTemplate.queryForObject(getQuery,
+                int.class,
+                getParams);
+    }
+
+    public int createLikes(int userIdx, int postingIdx) {
+        String createQuery = "insert into LikePost (userIdx, postingIdx) VALUES (?,?)";
+        Object[] createParams = new Object[]{userIdx, postingIdx};
+        this.jdbcTemplate.update(createQuery,createParams);
+
+        String lastInsertIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);
+    }
+
+    public void deleteLikes(int userIdx, int postingIdx) {
+        String deleteQuery = "update LikePost set status = 'INACTIVE' where userIdx=? and postingIdx = ?";
+        Object[] deleteParams = new Object[]{userIdx, postingIdx};
+        this.jdbcTemplate.update(deleteQuery, deleteParams);
+    }
+
 }

@@ -3,6 +3,9 @@ package com.example.demo.src.community;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.community.model.*;
+import com.example.demo.src.like.model.PatchLikeReq;
+import com.example.demo.src.like.model.PostLikeReq;
+import com.example.demo.src.like.model.PostLikeRes;
 import com.example.demo.utils.JwtService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -416,6 +419,55 @@ public class CommunityController {
             } else {
                 return new BaseResponse<>(PATCH_COMMENT_NO_DATA);
             }
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 게시글 좋아요 등록 API
+     * [POST] /likes/:userIdx
+     * @return BaseResponse<PostLikePostingRes>
+     */
+    @ResponseBody
+    @PostMapping("/likes/{userIdx}")
+    public BaseResponse<PostLikePostingRes> likes(@PathVariable("userIdx") int userIdx, @RequestBody PostLikePostingReq postLikePostingReq) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            if(communityProvider.checkLikes(userIdx, postLikePostingReq.getPostingIdx()) != 0) {
+                int likePostIdx = communityService.modifyLikes(userIdx, postLikePostingReq.getPostingIdx());
+                return new BaseResponse<>(new PostLikePostingRes(likePostIdx));
+            } else {
+                int likePostIdx = communityService.createLikes(userIdx, postLikePostingReq.getPostingIdx());
+                return new BaseResponse<>(new PostLikePostingRes(likePostIdx));
+            }
+
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 커뮤니티 게시글 좋아요 삭제 API
+     * [PATCH] /likes/:userIdx
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/likes/{userIdx}")
+    public BaseResponse<String> deletelikes(@PathVariable("userIdx") int userIdx, @RequestBody PatchLikePostingReq patchLikePostingReq) throws BaseException {
+        try {
+            if(communityProvider.checkLikes(userIdx, patchLikePostingReq.getPostingIdx()) != 0) {
+                communityService.deleteLikes(userIdx, patchLikePostingReq.getPostingIdx());
+                return new BaseResponse<>("삭제되었습니다.");
+            } else {
+                return new BaseResponse<>(PATCH_LIKES_POSTING_NO_DATA);
+            }
+
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
