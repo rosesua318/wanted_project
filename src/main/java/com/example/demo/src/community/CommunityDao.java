@@ -88,8 +88,8 @@ public class CommunityDao {
                 "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                 "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                 "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                 "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                 "JOIN Specialty s ON u.userIdx = s.userIdx " +
                 "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
@@ -152,10 +152,10 @@ public class CommunityDao {
                 "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                 "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                 "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?) as isLike, " +
-                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?) as isComment, " +
-                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?  and lp.status='ACTIVE') as isLike, " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?  and c.status='ACTIVE') as isComment, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                 "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                 "JOIN Specialty s ON u.userIdx = s.userIdx " +
                 "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
@@ -203,8 +203,8 @@ public class CommunityDao {
                 "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                 "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                 "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                 "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                 "JOIN Specialty s ON u.userIdx = s.userIdx " +
                 "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
@@ -279,10 +279,10 @@ public class CommunityDao {
                 "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                 "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                 "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?) as isLike, " +
-                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?) as isComment, " +
-                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?  and lp.status='ACTIVE') as isLike, " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?  and c.status='ACTIVE') as isComment, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                 "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                 "JOIN Specialty s ON u.userIdx = s.userIdx " +
                 "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
@@ -324,6 +324,164 @@ public class CommunityDao {
         return new GetAllRes(user, 2, communityTags, postingList);
     }
 
+    public GetMyPostRes getMyPost(int userIdx) {
+        String getUserQuery = "select u.userIdx, u.imageUrl, case when u.isNickname = 0 then u.name else u.nickname end as myName, " +
+                "case when u.isNickname = 0 then '기본' else '닉네임' end as type, " +
+                "ec.category as myJob, case when s.career = 0 then '신입' else concat(s.career, '년차') end as myCareer " +
+                "from User u JOIN Specialty s ON u.userIdx = s.userIdx " +
+                "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
+                "where u.userIdx = ?";
+        String getUserParams = String.valueOf(userIdx);
+
+        GetMyPostRes getMyPostRes = this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new GetMyPostRes(
+                        rs.getInt("userIdx"),
+                        rs.getString("imageUrl"),
+                        rs.getString("myName"),
+                        rs.getString("type"),
+                        rs.getString("myJob"),
+                        rs.getString("myCareer")
+                ), getUserParams);
+
+        String getPostingQuery = "select p.postingIdx, u.userIdx, u.imageUrl as profileUrl, " +
+                "case when u.isNickname = 0 " +
+                "then u.name else u.nickname end as name, " +
+                "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
+                "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
+                "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
+                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ? and lp.status='ACTIVE') as isLike, " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx and lp.status='ACTIVE') as likeNum, " +
+                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ? and c.status = 'ACTIVE') as isComment, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx and c.status = 'ACTIVE') as commentNum " +
+                "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
+                "where p.status = 'ACTIVE' and p.userIdx = ? " +
+                "ORDER BY p.createdAt DESC";
+        Object[] getPostingParams = new Object[]{userIdx, userIdx, userIdx};
+        List<MyPost> postingList = this.jdbcTemplate.query(getPostingQuery,
+                (rs, rowNum) -> new MyPost(
+                        rs.getInt("postingIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("profileUrl"),
+                        rs.getString("name"),
+                        rs.getString("date"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("imageUrl"),
+                        rs.getInt("isLike"),
+                        rs.getInt("likeNum"),
+                        rs.getInt("isComment"),
+                        rs.getInt("commentNum")
+                ), getPostingParams);
+
+        getMyPostRes.setPostList(postingList);
+
+        return getMyPostRes;
+    }
+
+    public GetMyCommentRes getMyComment(int userIdx) {
+        String getUserQuery = "select u.userIdx, u.imageUrl, case when u.isNickname = 0 then u.name else u.nickname end as myName, " +
+                "case when u.isNickname = 0 then '기본' else '닉네임' end as type, " +
+                "ec.category as myJob, case when s.career = 0 then '신입' else concat(s.career, '년차') end as myCareer " +
+                "from User u JOIN Specialty s ON u.userIdx = s.userIdx " +
+                "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
+                "where u.userIdx = ?";
+        String getUserParams = String.valueOf(userIdx);
+
+        GetMyCommentRes getMyCommentRes = this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new GetMyCommentRes(
+                        rs.getInt("userIdx"),
+                        rs.getString("imageUrl"),
+                        rs.getString("myName"),
+                        rs.getString("type"),
+                        rs.getString("myJob"),
+                        rs.getString("myCareer")
+                ), getUserParams);
+
+
+        String getCommentQuery = "select u.userIdx, c.commentIdx, c.content, case when timestampdiff(hour, c.createdAt, now()) < 1 then concat(timestampdiff(minute, c.createdAt, now()), '분 전') " +
+                                "else case when datediff(now(), c.createdAt) >= 1 then date_format(c.createdAt, '%Y.%m.%d') " +
+                                "else concat(timestampdiff(hour, c.createdAt, now()), '시간 전') end end as date, p.postingIdx, p.title, " +
+                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ? and lp.status='ACTIVE') as isLike, " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx and lp.status='ACTIVE') as likeNum, " +
+                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ? and c.status = 'ACTIVE') as isComment, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx and c.status = 'ACTIVE') as commentNum " +
+                "from Comment c JOIN User u ON c.userIdx = u.userIdx JOIN Posting p ON c.postingIdx = p.postingIdx " +
+                "where p.status = 'ACTIVE' and c.status = 'ACTIVE' and c.userIdx = ? " +
+                "ORDER BY p.createdAt DESC";
+        Object[] getCommentParams = new Object[]{ userIdx, userIdx, userIdx};
+        List<MyComment> commentList = this.jdbcTemplate.query(getCommentQuery,
+                (rs, rowNum) -> new MyComment(
+                        rs.getInt("userIdx"),
+                        rs.getInt("commentIdx"),
+                        rs.getString("content"),
+                        rs.getString("date"),
+                        rs.getInt("postingIdx"),
+                        rs.getString("title"),
+                        rs.getInt("isLike"),
+                        rs.getInt("likeNum"),
+                        rs.getInt("isComment"),
+                        rs.getInt("commentNum")
+                ), getCommentParams);
+
+        getMyCommentRes.setCommentList(commentList);
+
+        return getMyCommentRes;
+    }
+
+    public GetMyLikeRes getMyLike(int userIdx) {
+        String getUserQuery = "select u.userIdx, u.imageUrl, case when u.isNickname = 0 then u.name else u.nickname end as myName, " +
+                "case when u.isNickname = 0 then '기본' else '닉네임' end as type, " +
+                "ec.category as myJob, case when s.career = 0 then '신입' else concat(s.career, '년차') end as myCareer " +
+                "from User u JOIN Specialty s ON u.userIdx = s.userIdx " +
+                "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
+                "where u.userIdx = ?";
+        String getUserParams = String.valueOf(userIdx);
+
+        GetMyLikeRes getMyLikeRes = this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new GetMyLikeRes(
+                        rs.getInt("userIdx"),
+                        rs.getString("imageUrl"),
+                        rs.getString("myName"),
+                        rs.getString("type"),
+                        rs.getString("myJob"),
+                        rs.getString("myCareer")
+                ), getUserParams);
+
+        String getPostingQuery = "select p.postingIdx, u.userIdx, u.imageUrl as profileUrl, " +
+                "case when u.isNickname = 0 " +
+                "then u.name else u.nickname end as name, " +
+                "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
+                "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
+                "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
+                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ? and lp.status='ACTIVE') as isLike, " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx and lp.status='ACTIVE') as likeNum, " +
+                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ? and c.status = 'ACTIVE') as isComment, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx and c.status = 'ACTIVE') as commentNum " +
+                "from Posting p JOIN User u ON p.userIdx = u.userIdx JOIN LikePost lp ON lp.postingIdx = p.postingIdx " +
+                "where p.status = 'ACTIVE' and lp.userIdx = ? and lp.status = 'ACTIVE' " +
+                "ORDER BY p.createdAt DESC";
+        Object[] getPostingParams = new Object[]{userIdx, userIdx, userIdx};
+        List<MyPost> postingList = this.jdbcTemplate.query(getPostingQuery,
+                (rs, rowNum) -> new MyPost(
+                        rs.getInt("postingIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("profileUrl"),
+                        rs.getString("name"),
+                        rs.getString("date"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("imageUrl"),
+                        rs.getInt("isLike"),
+                        rs.getInt("likeNum"),
+                        rs.getInt("isComment"),
+                        rs.getInt("commentNum")
+                ), getPostingParams);
+
+        getMyLikeRes.setPostList(postingList);
+
+        return getMyLikeRes;
+    }
+
 
     public GetRecommOpenRes getRecommTabOpen() {
         String getTagQuery = "select ctIdx, name from CommunityTag";
@@ -343,8 +501,8 @@ public class CommunityDao {
                 "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                 "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                 "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                 "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                 "JOIN Specialty s ON u.userIdx = s.userIdx " +
                 "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
@@ -442,10 +600,10 @@ public class CommunityDao {
                     "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                     "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                     "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                    "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?) as isLike, " +
-                    "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                    "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?) as isComment, " +
-                    "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                    "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?  and lp.status='ACTIVE') as isLike, " +
+                    "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                    "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?  and c.status='ACTIVE') as isComment, " +
+                    "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                     "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                     "JOIN Specialty s ON u.userIdx = s.userIdx " +
                     "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
@@ -480,10 +638,10 @@ public class CommunityDao {
                     "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                     "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                     "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                    "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?) as isLike, " +
-                    "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                    "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?) as isComment, " +
-                    "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                    "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?  and lp.status='ACTIVE') as isLike, " +
+                    "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                    "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?  and c.status='ACTIVE') as isComment, " +
+                    "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                     "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                     "JOIN Specialty s ON u.userIdx = s.userIdx " +
                     "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
@@ -536,8 +694,8 @@ public class CommunityDao {
                 "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                 "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                 "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                 "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                 "JOIN Specialty s ON u.userIdx = s.userIdx " +
                 "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
@@ -605,10 +763,10 @@ public class CommunityDao {
                 "case when timestampdiff(hour, p.createdAt, now()) < 1 then concat(timestampdiff(minute, p.createdAt, now()), '분 전') " +
                 "else case when datediff(now(), p.createdAt) >= 1 then date_format(p.createdAt, '%Y.%m.%d') " +
                 "else concat(timestampdiff(hour, p.createdAt, now()), '시간 전') end end as date, p.title, p.content, p.imageUrl, " +
-                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?) as isLike, " +
-                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx) as likeNum, " +
-                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?) as isComment, " +
-                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx) as commentNum " +
+                "exists(select likePostIdx from LikePost lp where lp.postingIdx = p.postingIdx and lp.userIdx = ?  and lp.status='ACTIVE') as isLike, " +
+                "(select count(likePostIdx) from LikePost lp where lp.postingIdx = p.postingIdx  and lp.status='ACTIVE') as likeNum, " +
+                "exists(select commentIdx from Comment c where c.postingIdx = p.postingIdx and c.userIdx = ?  and c.status='ACTIVE') as isComment, " +
+                "(select count(commentIdx) from Comment c where c.postingIdx = p.postingIdx  and c.status='ACTIVE') as commentNum " +
                 "from Posting p JOIN User u ON p.userIdx = u.userIdx " +
                 "JOIN Specialty s ON u.userIdx = s.userIdx " +
                 "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +

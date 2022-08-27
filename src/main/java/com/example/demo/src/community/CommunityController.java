@@ -472,4 +472,70 @@ public class CommunityController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * My 커뮤니티 조회 (작성글 탭이 디폴트) API
+     * [GET] /communities/activities/:userIdx
+     * @return BaseResponse<GetMyPostRes>
+     */
+    @ResponseBody
+    @GetMapping("/activities/{userIdx}")
+    public BaseResponse<GetMyPostRes> getMyPost(@PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetMyPostRes getMyPostRes = communityProvider.getMyPost(userIdx);
+            return new BaseResponse<>(getMyPostRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * My 커뮤니티 조회 (작성댓글 탭) API
+     * [GET] /communities/activities/comments/:userIdx
+     * @return BaseResponse<GetMyCommentRes>
+     */
+    @ResponseBody
+    @GetMapping("/activities/comments/{userIdx}")
+    public BaseResponse<GetMyCommentRes> getMyComment(@PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetMyCommentRes getMyCommentRes = communityProvider.getMyComment(userIdx);
+            return new BaseResponse<>(getMyCommentRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * My 커뮤니티 조회 (좋아요 탭) API
+     * [GET] /communities/activities/likes/:userIdx
+     * @return BaseResponse<GetMyCommentRes>
+     */
+    @ResponseBody
+    @GetMapping("/activities/likes/{userIdx}")
+    public BaseResponse<GetMyLikeRes> getMyLike(@PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetMyLikeRes getMyLikeRes = communityProvider.getMyLike(userIdx);
+            return new BaseResponse<>(getMyLikeRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }
