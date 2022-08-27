@@ -79,4 +79,30 @@ public class CommunityService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public int modifyLikes(int userIdx, int postingIdx) throws BaseException {
+        try {
+            int likePostIdx = communityDao.modifyLikes(userIdx, postingIdx);
+            return likePostIdx;
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int createLikes(int userIdx, int postingIdx) throws BaseException {
+        try {
+            int likePostIdx = communityDao.createLikes(userIdx, postingIdx);
+            return likePostIdx;
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void deleteLikes(int userIdx, int postingIdx) throws BaseException {
+        try {
+            communityDao.deleteLikes(userIdx, postingIdx);
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

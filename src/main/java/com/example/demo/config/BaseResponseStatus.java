@@ -78,6 +78,8 @@ public enum BaseResponseStatus {
 
     PATCH_COMMENT_NO_DATA(false, 2109, "없는 댓글입니다."),
 
+    PATCH_LIKES_POSTING_NO_DATA(false, 2110, "게시글 좋아요가 되어있지 않습니다"),
+
     /**
      * 3000 : Response 오류
      */
