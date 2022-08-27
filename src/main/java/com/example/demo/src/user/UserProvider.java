@@ -90,6 +90,17 @@ public class UserProvider {
 
     }
 
+    // 전문분야 조회
+
+    public GetSpecialtyRes getSpecialty(int userIdx) throws BaseException{
+
+        try{
+            GetSpecialtyRes getSpecialtyRes = userDao.getSpecialty(userIdx);
+            return getSpecialtyRes;
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
 
 

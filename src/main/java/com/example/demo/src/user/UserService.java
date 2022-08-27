@@ -163,5 +163,30 @@ public class UserService {
         }
     }
 
+  //   전문분야 생성
+    public int createSpecialty(PostUserSpecialtyReq postUserSpecialtyReq) throws BaseException{
+
+        try{
+            int specialtyIdx = userDao.createSpecialty(postUserSpecialtyReq);
+
+            return specialtyIdx;
+
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // 구직여부 설정
+    public void modifyJobSearchStatus(PatchJobsStatusReq patchJobsStatusReq) throws BaseException{
+
+        try {
+            int result = userDao.modifyJobSearchStatus(patchJobsStatusReq);
+            if(result ==0)
+                throw new BaseException(MODIFY_FAIL_JOBSEARCH_STATUS);
+        }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
 
 }
