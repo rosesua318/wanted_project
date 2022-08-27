@@ -75,17 +75,12 @@ public class UserController {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
 
-        // 2. 아이디(로그인 아이디)
-        if(postUserReq.getEmail() == null){
-            return new BaseResponse<>(POST_USERS_EMPTY_ID);
-        }
-
-        // 3. 비밀번호
+        // 2. 비밀번호
         if(postUserReq.getPassword() == null){
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }
 
-        // 4. 전화번호
+        // 3. 전화번호
         if(postUserReq.getPhone() == null){
             return new BaseResponse<>(POST_USERS_EMPTY_PHONE);
         }
@@ -145,7 +140,7 @@ public class UserController {
                 return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
             }
             String result = userService.checkEmail(email);
-            return new BaseResponse<String>(result);
+            return new BaseResponse<>(result);
 
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -301,6 +296,81 @@ public class UserController {
         }catch(BaseException exception){
             exception.printStackTrace();
             return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 전문분야 조회
+     */
+
+    @ResponseBody
+    @GetMapping("/profiles/specialty/{userIdx}")
+    public BaseResponse<GetSpecialtyRes> getSpecialty(@PathVariable ("userIdx") int userIdx){
+
+        try{
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            GetSpecialtyRes getSpecialtyRes = userProvider.getSpecialty(userIdx);
+            return new BaseResponse<>(getSpecialtyRes);
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 전문분야 작성(생성)
+     */
+
+    @ResponseBody
+    @PostMapping("/profiles/specialty/{userIdx}")
+    public BaseResponse<String> createSpecialty(@PathVariable ("userIdx") int userIdx, @RequestBody PostUserSpecialtyReq postUserSpecialtyReq){
+
+        try{
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            int specialtyIdx = userService.createSpecialty(postUserSpecialtyReq);
+            String result = "specialtyIdx = " + specialtyIdx;
+            return new BaseResponse<>(result);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 구직 여부 설정
+     */
+
+    @ResponseBody
+    @PatchMapping("/profiles/jobs/status/{userIdx}")
+    public BaseResponse<String> modifyJobSearchStatus(@PathVariable("userIdx") int userIdx, @RequestBody PatchJobsStatusReq patchJobSearchReq){
+
+        try{
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            // 구직 여부 설정 값은 0.1.2 만 존재.
+            if(patchJobSearchReq.getIsJobSearch()>2 || patchJobSearchReq.getIsJobSearch()<0){
+                return new BaseResponse<>(INVALID_JOBSEARCH);
+            }
+            userService.modifyJobSearchStatus(patchJobSearchReq);
+            String result = "구직 여부 설정이 완료되었습니다.";
+            return new BaseResponse<>(result);
+        }catch(BaseException e){
+            return new BaseResponse<>(e.getStatus());
         }
     }
 }

@@ -44,6 +44,11 @@ public enum BaseResponseStatus {
 
     INVALID_USER_INACTIVE(false,2023,"탈퇴한 회원이거나 정보가 없는 회원입니다."),
 
+    INVALID_JOBSEARCH(false,2024,"해당하는 구직 여부 설정값이 없습니다."),
+
+
+
+    // 수아님
     POST_POSTING_NO_TITLE(false, 2101, "제목이 없습니다"),
     POST_POSTING_NO_CONTENT(false, 2102, "내용이 없습니다"),
 
@@ -128,6 +133,10 @@ public enum BaseResponseStatus {
     DELETE_FAIL_RESUME(false,4050,"이력서 삭제에 실패했습니다."),
 
     MODIFY_FAIL_USER_PRIVATE(false,4051,"계정 상태 변경에 실패했습니다.(비공개/공개)"),
+
+    UPDATE_FAIL_SPECIALTY_SKILL(false,4052,"스킬 작성에 실패했습니다.(전문분야)"),
+
+    MODIFY_FAIL_JOBSEARCH_STATUS(false,4053,"구직 여부 변경에 실패했습니다."),
 
 
 
