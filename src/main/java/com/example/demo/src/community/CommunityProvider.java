@@ -128,4 +128,28 @@ public class CommunityProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public GetMyPostRes getMyPost(int userIdx) throws BaseException {
+        try {
+            return communityDao.getMyPost(userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetMyCommentRes getMyComment(int userIdx) throws BaseException {
+        try {
+            return communityDao.getMyComment(userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetMyLikeRes getMyLike(int userIdx) throws BaseException {
+        try {
+            return communityDao.getMyLike(userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
