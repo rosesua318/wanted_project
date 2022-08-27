@@ -10,10 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
 // Service Create, Update, Delete 의 로직 처리
+@Transactional
 @Service
 public class UserService {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -41,7 +43,6 @@ public class UserService {
         else
             result = "비밀번호 입력";
         return result;
-
     }
 
     //POST
@@ -81,8 +82,6 @@ public class UserService {
         }
     }
 
-
-
     // 유저 상태 변경
     public void modifyUserStatus(PatchUserStatusReq patchUserStatusReq) throws BaseException {
         try {
@@ -108,11 +107,7 @@ public class UserService {
         } catch (Exception ignored) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
-
-
         try{
-
-
             int result = userDao.modifyPwd(patchPwdReq);
             if(result ==0){
                 throw new BaseException(MODIFY_FAIL_PWD);
@@ -140,9 +135,7 @@ public class UserService {
         }catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
-
     }
-
     // 계정 공개,비공개 설정
 
     public void modifyUserIsPrivate(PatchUserPrivate patchUserPrivate) throws BaseException{
@@ -153,7 +146,6 @@ public class UserService {
             if(userIdx != userDao.checkUser(userIdx)){
                 throw new BaseException(INVALID_USER_INACTIVE);
             }
-
             int result = userDao.modifyUserIsPrivate(patchUserPrivate);
             if(result ==0){
                 throw new BaseException(MODIFY_FAIL_USER_PRIVATE);
@@ -188,5 +180,4 @@ public class UserService {
         }
 
     }
-
 }

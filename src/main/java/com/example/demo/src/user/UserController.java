@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 import static com.example.demo.config.BaseResponseStatus.*;
+import static com.example.demo.utils.ValidationRegex.isRegexEmail;
+import static com.example.demo.utils.ValidationRegex.isRegexPassword;
 
 
 @RestController
@@ -64,41 +66,43 @@ public class UserController {
      * [POST] /users
      * @return BaseResponse<PostUserRes>
      */
-    // Body
+
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
 
 
+        try {
         // 1. 이메일 주소
-        if(postUserReq.getEmail() == null){
+        if (postUserReq.getEmail() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
 
         // 2. 비밀번호
-        if(postUserReq.getPassword() == null){
+        if (postUserReq.getPassword() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }
 
         // 3. 전화번호
-        if(postUserReq.getPhone() == null){
+        if (postUserReq.getPhone() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_PHONE);
         }
-    //    (테스트시의 불편함으로 잠깐 해제)
-        //이메일 정규표현
-//        if(isRegexEmail(postUserReq.getEmail())){  // 정규표현식과 다른 형식으로 받으면 invalid (이메일 주소 형식)
-//            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
-//        }
-        //비밀번호 정규표현
-//        if (isRegexPassword(postUserReq.getPassword())){  // 특수문자 / 문자 / 숫자 포함 형태의 8~20자리 이내의 암호 정규식
-//            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
-//        }
-        try{
+        //    (테스트시의 불편함으로 잠깐 해제)
+        // 이메일 정규표현
+        if (!isRegexEmail(postUserReq.getEmail())) {  // 정규표현식과 다른 형식으로 받으면 invalid (이메일 주소 형식)
+            System.out.println("정규식 - 이메일");
+            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        }
+        //  비밀번호 정규표현
+        if (!isRegexPassword(postUserReq.getPassword())) {  // 특수문자 / 문자 / 숫자 포함 형태의 8~20자리 이내의 암호 정규식
+            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+        }
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
-        } catch(BaseException exception){
+        } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
+
     }
     /**
      * 로그인 API
@@ -110,7 +114,6 @@ public class UserController {
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
         try{
 
-
             // 기본 validation. 아이디(이메일) , 비밀번호를 입력하지 않은 경우
             if(postLoginReq.getEmail() == null){
                 return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
@@ -119,7 +122,9 @@ public class UserController {
                 return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
             }
 
-
+            if(userProvider.checkEmail(postLoginReq.getEmail())==0){
+                return new BaseResponse<>(FAILED_TO_LOGIN);
+            }
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
         } catch (BaseException exception){
@@ -148,7 +153,6 @@ public class UserController {
 
     }
 
-
     /**
      * 유저정보변경 API
      * [PATCH] /users/:userIdx
@@ -156,7 +160,7 @@ public class UserController {
      */
     @ResponseBody
     @PatchMapping("/{userIdx}")
-    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user){
+    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody PatchUserReq patchUserReq){
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -164,10 +168,13 @@ public class UserController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-           // 변경 사항 : 이름, 이메일, 전화번호(현재 전화번호 인증하기 기능 제외)
-            PatchUserReq patchUserReq = new PatchUserReq(user.getUserIdx(),user.getName(),user.getEmail(),user.getPhone());
-            userService.modifyUserInfo(patchUserReq);
+            // body,파라미터 유저 인덱스 검증
+            if (userIdx != patchUserReq.getUserIdx()){
+                return new BaseResponse<>(INVALID_USER_IDX);
+            }
 
+           // 변경 사항 : 이름, 이메일, 전화번호(현재 전화번호 인증하기 기능 제외)
+            userService.modifyUserInfo(patchUserReq);
             String result = "회원 정보 수정 완료되었습니다.";
         return new BaseResponse<>(result);
         } catch (BaseException exception) {
@@ -217,6 +224,11 @@ public class UserController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }  // 이 부분까지는 유저가 사용하는 기능 중 유저에 대한 보안이 철저히 필요한 api 에서 사용
+
+            // body,파라미터 유저 인덱스 검증
+            if (userIdx != userStatus.getUserIdx()){
+                return new BaseResponse<>(INVALID_USER_IDX);
+            }
 
             PatchUserStatusReq patchUserStatusReq = new PatchUserStatusReq(userIdx, userStatus.getStatus());
             userService.modifyUserStatus(patchUserStatusReq);

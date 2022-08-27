@@ -76,7 +76,7 @@ public class UserDao {
     }
 
     public int checkEmail(String email){
-        String checkEmailQuery = "select exists(select email from User where email = ?)";
+        String checkEmailQuery = "select exists(select email from User where email = ? AND status = 'ACTIVE')";
         String checkEmailParams = email;
         return this.jdbcTemplate.queryForObject(checkEmailQuery,
                 int.class,
@@ -175,6 +175,7 @@ public class UserDao {
 
     public GetSpecialtyRes getSpecialty(int userIdx) {
 
+        System.out.println("실행됨?");
         // 1. JobGroup
         String getJobGroupQuery = "SELECT EC.categoryIdx,EC.category FROM EmploymentCategory AS EC\n" +
                 "JOIN Specialty AS S ON S.categoryIdx = EC.categoryIdx WHERE S.userIdx=?;";
@@ -215,7 +216,6 @@ public class UserDao {
                 userIdx);
 
         return new GetSpecialtyRes(jobGroup,dutyList,career,jobSkillList);
-
     }
 
     // 전문분야 생성

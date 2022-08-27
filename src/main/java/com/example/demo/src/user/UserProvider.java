@@ -10,12 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
 //Provider : Read의 비즈니스 로직 처리
+@Transactional(readOnly = true)
 @Service
 public class UserProvider {
 
@@ -31,25 +33,6 @@ public class UserProvider {
         this.jwtService = jwtService;
     }
 
-    public List<GetUserRes> getUsers() throws BaseException{
-        try{
-            List<GetUserRes> getUserRes = userDao.getUsers();
-            return getUserRes;
-        }
-        catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
-    public List<GetUserRes> getUsersByEmail(String email) throws BaseException{
-        try{
-            List<GetUserRes> getUsersRes = userDao.getUsersByEmail(email);
-            return getUsersRes;
-        }
-        catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-                    }
 
 
     public GetUserRes getUser(int userIdx) throws BaseException {
@@ -63,13 +46,15 @@ public class UserProvider {
 
     public int checkEmail(String email) throws BaseException{
         try{
-            return userDao.checkEmail(email);
+            int result = userDao.checkEmail(email);
+            return result;
         } catch (Exception exception){
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_TO_LOGIN);
         }
     }
 
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
+
 
         User user = userDao.getPwd(postLoginReq);
         String encryptPwd;
@@ -87,7 +72,6 @@ public class UserProvider {
         else{
             throw new BaseException(FAILED_TO_LOGIN);
         }
-
     }
 
     // 전문분야 조회
@@ -101,7 +85,4 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
-
-
 }

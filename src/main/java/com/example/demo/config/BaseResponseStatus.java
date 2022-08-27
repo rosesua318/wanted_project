@@ -35,6 +35,8 @@ public enum BaseResponseStatus {
 
     POST_USERS_EMPTY_ID(false,2019,"아이디를 입력해주세요."),
 
+
+
     POST_USERS_EMPTY_PHONE(false,2020,"전화번호를 입력해주세요."),
 
     POST_USERS_EXISTS_PHONE(false,2021,"중복된 전화번호입니다."),
