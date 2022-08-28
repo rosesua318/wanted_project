@@ -34,7 +34,6 @@ public class BookmarkDao {
 
         String lastInsertIdQuery = "select last_insert_id()";
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
-
     }
     /**
      * 북마크 중복 검사
@@ -61,16 +60,13 @@ public class BookmarkDao {
                 ,getStoreIdParam);
     }
 
-
-
+    /**
+     * 북마크 삭제
+     */
     public int modifyBookmarkStatus(PatchBookmarkStatusReq patchBookmarkStatusReq){
         String modifyCartStatusQuery = "UPDATE Bookmark SET status ='DELETE' WHERE bookmarkIdx = ?";
         Object[] modifyCartStatusParams = new Object[]{patchBookmarkStatusReq.getBookmarkIdx()};
 
         return this.jdbcTemplate.update(modifyCartStatusQuery,modifyCartStatusParams);
-
     }
-
-
-
 }

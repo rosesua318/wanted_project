@@ -24,7 +24,6 @@ public class BookmarkProvider {
         this.jwtService = jwtService;
     }
 
-
     // 북마크 중복체크
     public int checkBookmark(int employmentIdx) throws BaseException{
         try{
@@ -33,7 +32,4 @@ public class BookmarkProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
-
-
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 import static com.example.demo.config.BaseResponseStatus.POST_BOOKMARK_CREATE_FAIL;
 
 @RestController
@@ -56,19 +57,14 @@ public class BookmarkController {
         if (postBookMarkReq.getEmploymentIdx() == 0) {
             return new BaseResponse<>(POST_BOOKMARK_CREATE_FAIL);
         }
-
         try{
-
             PostBookmarkRes postBookmarkRes = bookmarkService.createBookmark(postBookMarkReq);
-
             return new BaseResponse<>(postBookmarkRes);
         } catch(BaseException exception){
 
             return new BaseResponse<>((exception.getStatus()));
         }
-
     }
-
 
     /**
      * 북마크 조회 API
@@ -77,21 +73,18 @@ public class BookmarkController {
     @GetMapping("/{userIdx}")
     public BaseResponse<List<GetEmploymentInfoRes>> getBookmarkList(@PathVariable("userIdx") int userIdx) throws BaseException {
         //  jwt에서 idx 추출.
-//
-//        int userIdxByJwt = jwtService.getUserIdx();
-//        //userIdx와 접근한 유저가 같은지 확인
-//        if (userIdx != userIdxByJwt) {
-//            return new BaseResponse<>(INVALID_USER_JWT);
-//        }
 
+        int userIdxByJwt = jwtService.getUserIdx();
+        //userIdx와 접근한 유저가 같은지 확인
+        if (userIdx != userIdxByJwt) {
+            return new BaseResponse<>(INVALID_USER_JWT);
+        }
         try {
-
             List<GetEmploymentInfoRes> employmentInfo = employmentProvider.getEmploymentInfoList(userIdx);
             return new BaseResponse<>(employmentInfo);
 
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
-
         }
     }
 
@@ -105,13 +98,12 @@ public class BookmarkController {
     public BaseResponse<String> DeleteBookmark(@PathVariable("userIdx") int userIdx, @RequestBody BookmarkStatus bookmarkStatus) throws BaseException {
 
         try{
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PatchBookmarkStatusReq patchBookmarkStatusReq = new PatchBookmarkStatusReq(bookmarkStatus.getBookmarkIdx());
             bookmarkService.DeleteBookmark(patchBookmarkStatusReq);
 
@@ -123,5 +115,4 @@ public class BookmarkController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
 }

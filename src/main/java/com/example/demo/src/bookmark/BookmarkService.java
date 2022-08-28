@@ -55,7 +55,4 @@ public class BookmarkService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
-
-
 }
