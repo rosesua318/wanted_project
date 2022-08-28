@@ -48,6 +48,8 @@ public enum BaseResponseStatus {
 
     INVALID_JOBSEARCH(false,2024,"해당하는 구직 여부 설정값이 없습니다."),
 
+    POST_USERS_EMPTY_NAME(false,2025,"회원 이름을 입력해주세요."),
+
 
 
     // 수아님

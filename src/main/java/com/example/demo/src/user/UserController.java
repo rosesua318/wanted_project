@@ -7,7 +7,10 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
+
+
 
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -73,18 +76,25 @@ public class UserController {
 
 
         try {
+
+            // @Valid 를 이용하고 싶었지만, 템플릿 구조 상 ControllerAdvice를 사용하긴 애매해서 if문으로 처리.
         // 1. 이메일 주소
-        if (postUserReq.getEmail() == null) {
+        if (postUserReq.getEmail() == null || postUserReq.getEmail() =="") {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
 
         // 2. 비밀번호
-        if (postUserReq.getPassword() == null) {
+        if (postUserReq.getPassword() == null || postUserReq.getPassword() == "") {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }
 
-        // 3. 전화번호
-        if (postUserReq.getPhone() == null) {
+        // 3. 이름
+        if(postUserReq.getName() == null || postUserReq.getName() == ""){
+            return new BaseResponse<>(POST_USERS_EMPTY_NAME);
+        }
+
+        // 4. 전화번호
+        if (postUserReq.getPhone() == null || postUserReq.getPhone() == "") {
             return new BaseResponse<>(POST_USERS_EMPTY_PHONE);
         }
         //    (테스트시의 불편함으로 잠깐 해제)
