@@ -52,14 +52,14 @@ public class BookmarkController {
 
     @ResponseBody
     @PostMapping("{userIdx}") // POST localhost:9000/bookmarks/:userIdx;
-    public BaseResponse<PostBookmarkRes> createBookmark(@RequestBody PostBookMarkReq postBookMarkReq) {
+    public BaseResponse<Bookmark.Response> createBookmark(@RequestBody Bookmark.Request request) {
         // 북마크 할 채용 공고를 입력하지 않은 경우.
-        if (postBookMarkReq.getEmploymentIdx() == 0) {
+        if (request.getEmploymentIdx() == 0) {
             return new BaseResponse<>(POST_BOOKMARK_CREATE_FAIL);
         }
         try{
-            PostBookmarkRes postBookmarkRes = bookmarkService.createBookmark(postBookMarkReq);
-            return new BaseResponse<>(postBookmarkRes);
+            Bookmark.Response response = bookmarkService.createBookmark(request);
+            return new BaseResponse<>(response);
         } catch(BaseException exception){
 
             return new BaseResponse<>((exception.getStatus()));
@@ -95,7 +95,7 @@ public class BookmarkController {
 
     @ResponseBody
     @PatchMapping("/status/{userIdx}") //
-    public BaseResponse<String> DeleteBookmark(@PathVariable("userIdx") int userIdx, @RequestBody BookmarkStatus bookmarkStatus) throws BaseException {
+    public BaseResponse<String> DeleteBookmark(@PathVariable("userIdx") int userIdx, @RequestBody Bookmark.BookmarkStatus bookmarkStatus) throws BaseException {
 
         try{
             //jwt에서 idx 추출.
@@ -104,8 +104,8 @@ public class BookmarkController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            PatchBookmarkStatusReq patchBookmarkStatusReq = new PatchBookmarkStatusReq(bookmarkStatus.getBookmarkIdx());
-            bookmarkService.DeleteBookmark(patchBookmarkStatusReq);
+            Bookmark.BookmarkStatus bookmarkStatusReq = new Bookmark.BookmarkStatus(bookmarkStatus.getBookmarkIdx());
+            bookmarkService.DeleteBookmark(bookmarkStatusReq);
 
             String result = "북마크 삭제 완료";
             return new BaseResponse<>(result);

@@ -1,8 +1,6 @@
 package com.example.demo.src.resume;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.bookmark.model.PostBookMarkReq;
-import com.example.demo.src.bookmark.model.PostBookmarkRes;
 import com.example.demo.src.resume.model.PatchResumeUpdateReq;
 import com.example.demo.src.resume.model.PostResumeRes;
 import com.example.demo.src.resume.model.ResumeTable;
@@ -106,10 +104,6 @@ public class ResumeService {
                 resumeDao.updateEducation(patchResumeUpdateReq.getEducationList());
 
             }
-
-//        if(!isEmpty(patchCvReq.getSkillList())){
-//            cvDao.createCvSkill(patchCvReq.getSkillList(), cvIdx);
-//        }
 
             // 5. Award
             if((patchResumeUpdateReq.getAwardList()!=null)){

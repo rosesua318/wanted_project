@@ -1,9 +1,9 @@
 package com.example.demo.src.bookmark;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.bookmark.model.Bookmark;
 import com.example.demo.src.bookmark.model.GetBookmarkEmpIdRes;
-import com.example.demo.src.bookmark.model.PatchBookmarkStatusReq;
-import com.example.demo.src.bookmark.model.PostBookMarkReq;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -25,10 +25,10 @@ public class BookmarkDao {
      *
      * 북마크 생성 API
      */
-    public int createBookmark(PostBookMarkReq postBookMarkReq) throws BaseException {
+    public int createBookmark(Bookmark.Request request) throws BaseException {
 
         String createDibsQuery = "INSERT INTO Bookmark (employmentIdx,userIdx) VALUES (?,?)";
-        Object[] createDibsParams = new Object[]{postBookMarkReq.getEmploymentIdx(),postBookMarkReq.getUserIdx()};
+        Object[] createDibsParams = new Object[]{request.getEmploymentIdx(),request.getUserIdx()};
 
         this.jdbcTemplate.update(createDibsQuery, createDibsParams);
 
@@ -63,9 +63,9 @@ public class BookmarkDao {
     /**
      * 북마크 삭제
      */
-    public int modifyBookmarkStatus(PatchBookmarkStatusReq patchBookmarkStatusReq){
+    public int modifyBookmarkStatus(Bookmark.BookmarkStatus bookmarkStatusReq){
         String modifyCartStatusQuery = "UPDATE Bookmark SET status ='DELETE' WHERE bookmarkIdx = ?";
-        Object[] modifyCartStatusParams = new Object[]{patchBookmarkStatusReq.getBookmarkIdx()};
+        Object[] modifyCartStatusParams = new Object[]{bookmarkStatusReq.getBookmarkIdx()};
 
         return this.jdbcTemplate.update(modifyCartStatusQuery,modifyCartStatusParams);
     }
