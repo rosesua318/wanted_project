@@ -6,11 +6,13 @@ import com.example.demo.src.like.model.GetLikeRes;
 import com.example.demo.src.like.model.PatchLikeReq;
 import com.example.demo.src.like.model.PostLikeReq;
 import com.example.demo.src.like.model.PostLikeRes;
+import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 import static com.example.demo.config.BaseResponseStatus.PATCH_LIKES_NO_DATA;
 
 @RestController
@@ -22,10 +24,14 @@ public class LikeController {
     @Autowired
     private final LikeService likeService;
 
+    @Autowired
+    private final JwtService jwtService;
 
-    public LikeController(LikeProvider likeProvider, LikeService likeService) {
+
+    public LikeController(LikeProvider likeProvider, LikeService likeService, JwtService jwtService) {
         this.likeProvider = likeProvider;
         this.likeService = likeService;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -37,6 +43,12 @@ public class LikeController {
     @GetMapping("/{userIdx}")
     public BaseResponse<List<GetLikeRes>> getLikes(@PathVariable("userIdx") int userIdx) throws BaseException {
         try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<GetLikeRes> getLikeRes = likeProvider.getLikes(userIdx);
             return new BaseResponse<>(getLikeRes);
         } catch (BaseException exception) {
@@ -54,6 +66,12 @@ public class LikeController {
     @PostMapping("/{userIdx}")
     public BaseResponse<PostLikeRes> likes(@PathVariable("userIdx") int userIdx, @RequestBody PostLikeReq postLikeReq) throws BaseException {
         try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             if(likeProvider.checkLikes(userIdx, postLikeReq.getEmploymentIdx()) != 0) {
                 int likeIdx = likeService.modifyLikes(userIdx, postLikeReq.getEmploymentIdx());
                 return new BaseResponse<>(new PostLikeRes(likeIdx));
@@ -76,6 +94,12 @@ public class LikeController {
     @PatchMapping("/{userIdx}")
     public BaseResponse<String> deletelikes(@PathVariable("userIdx") int userIdx, @RequestBody PatchLikeReq patchLikeReq) throws BaseException {
         try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             if(likeProvider.checkLikes(userIdx, patchLikeReq.getEmploymentIdx()) != 0) {
                 likeService.deleteLikes(userIdx, patchLikeReq.getEmploymentIdx());
                 return new BaseResponse<>("삭제되었습니다.");
