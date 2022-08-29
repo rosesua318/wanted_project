@@ -52,14 +52,15 @@ public class BookmarkController {
 
     @ResponseBody
     @PostMapping("{userIdx}") // POST localhost:9000/bookmarks/:userIdx;
-    public BaseResponse<Bookmark.Response> createBookmark(@RequestBody Bookmark.Request request) {
+    public BaseResponse<String> createBookmark(@RequestBody Bookmark.Request request) {
         // 북마크 할 채용 공고를 입력하지 않은 경우.
         if (request.getEmploymentIdx() == 0) {
             return new BaseResponse<>(POST_BOOKMARK_CREATE_FAIL);
         }
         try{
-            Bookmark.Response response = bookmarkService.createBookmark(request);
-            return new BaseResponse<>(response);
+            bookmarkService.createBookmark(request);
+            String result = "북마크 등록 완료되었습니다.";
+            return new BaseResponse<>(result);
         } catch(BaseException exception){
 
             return new BaseResponse<>((exception.getStatus()));

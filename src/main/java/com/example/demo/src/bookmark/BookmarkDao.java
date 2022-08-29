@@ -36,14 +36,25 @@ public class BookmarkDao {
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
     }
     /**
-     * 북마크 중복 검사
+     * 북마크 중복 검사 (이미 북마크 한 경우)
      */
-    public int checkBookmark(int employmentIdx){
-        String checkBookmmarkQuery = "SELECT EXISTS(SELECT employmentIdx from Bookmark where employmentIdx = ?)";
+    public int checkBookmark(int employmentIdx, int userIdx){
+        String checkBookmmarkQuery = "SELECT EXISTS(SELECT employmentIdx from Bookmark where employmentIdx = ? and userIdx = ? and status = 'ACTIVE')";
+        Object[] checkBookmarkParams = new Object[]{employmentIdx,userIdx};
+        return this.jdbcTemplate.queryForObject(checkBookmmarkQuery,int.class,
+                checkBookmarkParams);
+    }
+
+    /**   북마크 검사 -> DB 상 삭제로 되어있을 경우 STATUS 만 바꾸기
+     *
+     */
+    public int checkBookmarkDelete(int employmentIdx){
+        String checkBookmmarkQuery = "SELECT EXISTS(SELECT employmentIdx from Bookmark where employmentIdx = ? and status = 'DELETE')";
         int checkBookmarkParams = employmentIdx;
         return this.jdbcTemplate.queryForObject(checkBookmmarkQuery,int.class,
                 checkBookmarkParams);
     }
+
 
     /**
      * 북마크 관련 채용 공고 포지션 추출
@@ -63,11 +74,17 @@ public class BookmarkDao {
     /**
      * 북마크 삭제
      */
-    public int modifyBookmarkStatus(Bookmark.BookmarkStatus bookmarkStatusReq, int userIdx) throws BaseException{
+    public int DeleteBookmarkStatus(int employmentIdx, int userIdx) throws BaseException{
         String modifyBookmarkStatusQuery = "UPDATE Bookmark SET status ='DELETE' WHERE employmentIdx = ? AND userIdx = ?";
-        Object[] modifyBookmarkStatusParams = new Object[]{bookmarkStatusReq.getEmploymentIdx(),userIdx};
+        Object[] modifyBookmarkStatusParams = new Object[]{employmentIdx,userIdx};
 
-        System.out.println("여기냐?");
+        return this.jdbcTemplate.update(modifyBookmarkStatusQuery,modifyBookmarkStatusParams);
+    }
+
+    public int ActiveBookmarkStatus(int employmentIdx, int userIdx) throws BaseException{
+        String modifyBookmarkStatusQuery = "UPDATE Bookmark SET status ='ACTIVE' WHERE employmentIdx = ? AND userIdx = ?";
+        Object[] modifyBookmarkStatusParams = new Object[]{employmentIdx,userIdx};
+
         return this.jdbcTemplate.update(modifyBookmarkStatusQuery,modifyBookmarkStatusParams);
     }
 }

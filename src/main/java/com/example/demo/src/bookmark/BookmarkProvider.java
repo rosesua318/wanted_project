@@ -25,9 +25,17 @@ public class BookmarkProvider {
     }
 
     // 북마크 중복체크
-    public int checkBookmark(int employmentIdx) throws BaseException{
+    public int checkBookmark(int employmentIdx, int userIdx) throws BaseException{
         try{
-            return bookmarkDao.checkBookmark(employmentIdx);
+            return bookmarkDao.checkBookmark(employmentIdx, userIdx);
+        }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkBookmarkDelete(int employmentIdx) throws BaseException{
+        try{
+            return bookmarkDao.checkBookmarkDelete(employmentIdx);
         }catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
