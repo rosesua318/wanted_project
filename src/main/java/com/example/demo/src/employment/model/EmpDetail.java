@@ -23,8 +23,8 @@ public class EmpDetail {
 
     private String location; // 근무지역
 
-    private String recommend; // 채용보상금 - 추천인
-    private String applicant; // 채용보상금 - 지원자
+    private int recommend; // 채용보상금 - 추천인
+    private int applicant; // 채용보상금 - 지원자
 
 
 

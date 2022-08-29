@@ -77,7 +77,6 @@ public class UserController {
 
 
         try {
-
             // @Valid 를 이용하고 싶었지만, 템플릿 구조 상 ControllerAdvice를 사용하긴 애매해서 if문으로 처리.
         // 1. 이메일 주소
         if (postUserReq.getEmail() == null || postUserReq.getEmail() =="") {
@@ -101,7 +100,6 @@ public class UserController {
 
         // 이메일 정규표현
         if (!isRegexEmail(postUserReq.getEmail())) {  // 정규표현식과 다른 형식으로 받으면 invalid (이메일 주소 형식)
-            System.out.println("정규식 - 이메일");
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
         //  비밀번호 정규표현

@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.CREATE_FAIL_APPLICANT;
-import static com.example.demo.config.BaseResponseStatus.CREATE_FAIL_RESUMETABLE;
 
 @Repository
 public class EmploymentDao {
@@ -249,6 +248,7 @@ public class EmploymentDao {
                 getEmploymentParams
                 );
 
+
         // 3. tag
 
         String tagQuery = " SELECT Tag.tagIdx,tag FROM Tag " +
@@ -265,7 +265,7 @@ public class EmploymentDao {
 
         // 4. EmpDetail
 
-        String empDetailQuery = " SELECT employment, introduce, deadline, location,CONCAT(recommender,'원') AS recommender,CONCAT(applicant,'원') AS applicant FROM Employment WHERE employmentIdx = ? ";
+        String empDetailQuery = " SELECT employment, introduce, deadline, location,recommender,applicant FROM Employment WHERE employmentIdx = ? ";
 
         EmpDetail empDetail = this.jdbcTemplate.queryForObject(empDetailQuery,
                 (rs,rowNum) -> new EmpDetail(
@@ -273,8 +273,8 @@ public class EmploymentDao {
                         rs.getString("introduce"),
                         rs.getString("deadline"),
                         rs.getString("location"),
-                        rs.getString("recommender"),
-                        rs.getString("applicant")),
+                        rs.getInt("recommender"),
+                        rs.getInt("applicant")),
                 getEmploymentParams
                 );
 
