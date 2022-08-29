@@ -104,8 +104,8 @@ public class BookmarkController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            Bookmark.BookmarkStatus bookmarkStatusReq = new Bookmark.BookmarkStatus(bookmarkStatus.getBookmarkIdx());
-            bookmarkService.DeleteBookmark(bookmarkStatusReq);
+            Bookmark.BookmarkStatus bookmarkStatusReq = new Bookmark.BookmarkStatus(bookmarkStatus.getEmploymentIdx());
+            bookmarkService.DeleteBookmark(bookmarkStatusReq,userIdx);
 
             String result = "북마크 삭제 완료";
             return new BaseResponse<>(result);

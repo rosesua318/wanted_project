@@ -43,9 +43,9 @@ public class BookmarkService {
         }
     }
 
-    public void DeleteBookmark(Bookmark.BookmarkStatus bookmarkStatusReq) throws BaseException{
+    public void DeleteBookmark(Bookmark.BookmarkStatus bookmarkStatusReq, int userIdx) throws BaseException{
         try{
-            int result = bookmarkDao.modifyBookmarkStatus(bookmarkStatusReq);
+            int result = bookmarkDao.modifyBookmarkStatus(bookmarkStatusReq, userIdx);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_BOOKMARK_STATUS);
             }

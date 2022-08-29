@@ -26,11 +26,11 @@ public class Bookmark {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class BookmarkStatus{
-        private int bookmarkIdx;
+        private int employmentIdx;
         private String status;
 
-        public BookmarkStatus(int bookmarkIdx) {
-            this.bookmarkIdx = bookmarkIdx;
+        public BookmarkStatus(int employmentIdx) {
+            this.employmentIdx = employmentIdx;
         }
     }
 
