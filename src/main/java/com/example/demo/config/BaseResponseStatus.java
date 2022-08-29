@@ -89,6 +89,8 @@ public enum BaseResponseStatus {
 
     PATCH_LIKES_POSTING_NO_DATA(false, 2110, "게시글 좋아요가 되어있지 않습니다"),
 
+    PATCH_INTEREST_TAG_NO_DATA(false, 2111, "설정할 관심 태그가 없습니다"),
+
     /**
      * 3000 : Response 오류
      */

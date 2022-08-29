@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
+import static com.example.demo.config.BaseResponseStatus.PATCH_INTEREST_TAG_NO_DATA;
 
 @RestController
 @RequestMapping("/wanted")
@@ -90,6 +91,10 @@ public class WantedController {
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            if(patchInterestTagReq.getTags().size() == 0) {
+                return new BaseResponse<>(PATCH_INTEREST_TAG_NO_DATA);
             }
 
 
