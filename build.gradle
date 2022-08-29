@@ -70,6 +70,13 @@ dependencies {
     //s3 의존성 설치
     //compileOnly 'org.springframework.cloud:spring-cloud-starter-aws:2.2.5.RELEASE'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
+    // oauth
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    implementation 'com.google.code.gson:gson:2.8.7'
 }
 
 
