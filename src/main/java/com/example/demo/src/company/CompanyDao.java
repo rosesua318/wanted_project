@@ -22,7 +22,7 @@ public class CompanyDao {
     }
 
     /* 회사 상세 페이지 조회(비회원용) */
-    public GetCompanyDetailRes getCompanyDetail (int companyIdx){
+    public Company.DetailRes getCompanyDetail (int companyIdx){
 
         // 1. CompanyBasic
         String getCompanyBasicQuery = "SELECT logoUrl,companyName,salary,employee FROM Company WHERE Company.companyIdx = ?";
@@ -40,6 +40,8 @@ public class CompanyDao {
         String getCompanyEmpQuery = "SELECT employmentIdx,employment, recommender+applicant AS compensation, deadline\n" +
                 " FROM Employment\n" +
                 " JOIN Company ON Company.companyIdx = Employment.companyIdx WHERE Company.CompanyIdx = ? LIMIT 4";
+
+
 
         List<CompanyEmp> companyEmpList = this.jdbcTemplate.query(getCompanyEmpQuery,
                 (rs, rowNum) -> new CompanyEmp(
@@ -81,7 +83,7 @@ public class CompanyDao {
                         rs.getString("tag")),
                 companyIdx);
 
-        return new GetCompanyDetailRes(companyBasic,companyEmpList,companyImgList,companyNewsList,tagList);
+        return new Company.DetailRes(companyBasic,companyEmpList,companyImgList,companyNewsList,tagList);
     }
 
 
@@ -89,7 +91,7 @@ public class CompanyDao {
     /*
     회사 상세 페이지 조회(회원용)
      */
-    public GetCompanyDetailRes getCompanyDetail (int userIdx, int companyIdx){
+    public Company.DetailRes getCompanyDetail (int userIdx, int companyIdx){
 
         // 1. CompanyBasic
         String getCompanyBasicQuery = "SELECT logoUrl,companyName,salary,employee,\n" +
@@ -153,23 +155,23 @@ public class CompanyDao {
                         rs.getString("tag")),
                 companyIdx);
 
-        return new GetCompanyDetailRes(companyBasic,companyEmpList,companyImgList,companyNewsList,tagList);
+        return new Company.DetailRes(companyBasic,companyEmpList,companyImgList,companyNewsList,tagList);
     }
 
     /* 회사 뉴스 조회 */
 
-    public GetCompanyNewsRes getCompanyNews(int companyIdx, int newsIdx){
+    public Company.NewsRes getCompanyNews(int companyIdx, int newsIdx){
 
         String getCompanyNewsQuery = "SELECT CN.CompanyNewsId,NewsUrl FROM CompanyNews AS CN WHERE companyIdx =? AND CompanyNewsId =?";
 
         Object[] getCompanyNewsParams = new Object[]{companyIdx,newsIdx};
 
-        GetCompanyNewsRes getCompanyNewsRes = this.jdbcTemplate.queryForObject(getCompanyNewsQuery,
-                (rs,rowNum)-> new GetCompanyNewsRes(
+        Company.NewsRes newsRes = this.jdbcTemplate.queryForObject(getCompanyNewsQuery,
+                (rs,rowNum)-> new Company.NewsRes(
                         rs.getInt("CompanyNewsId"),
                         rs.getString("NewsUrl")),
                 getCompanyNewsParams);
 
-        return getCompanyNewsRes;
+        return newsRes;
     }
 }

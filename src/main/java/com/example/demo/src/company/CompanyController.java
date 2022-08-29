@@ -3,9 +3,9 @@ package com.example.demo.src.company;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.company.model.GetCompanyDetailRes;
-import com.example.demo.src.company.model.GetCompanyNewsRes;
-import com.example.demo.src.employment.model.GetEmpHomeRes;
+import com.example.demo.src.company.model.Company;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,10 @@ public class CompanyController {
     @Autowired
     private final CompanyProvider companyProvider;
     @Autowired
-    private final CompanyService companyService;
-    @Autowired
     private final CompanyDao companyDao;
 
-    public CompanyController(CompanyProvider companyProvider, CompanyService companyService, CompanyDao companyDao) {
+    public CompanyController(CompanyProvider companyProvider, CompanyDao companyDao) {
         this.companyProvider = companyProvider;
-        this.companyService = companyService;
         this.companyDao = companyDao;
     }
 
@@ -35,19 +32,16 @@ public class CompanyController {
      */
     @ResponseBody
     @GetMapping("/{companyIdx}")
-    public BaseResponse<GetCompanyDetailRes> getCompanyDetail(@PathVariable int companyIdx) throws BaseException{
+    public BaseResponse<Company.DetailRes> getCompanyDetail(@PathVariable int companyIdx) throws BaseException{
 
         try{
+            Company.DetailRes detailRes = companyProvider.getCompanyDetail(companyIdx);
+            return new BaseResponse<>(detailRes);
 
-            GetCompanyDetailRes getCompanyDetailRes = companyProvider.getCompanyDetail(companyIdx);
-
-            return new BaseResponse<>(getCompanyDetailRes);
         }catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
-
     }
-//
 
 
     /*
@@ -56,35 +50,30 @@ public class CompanyController {
 
     @ResponseBody
     @GetMapping("/{userIdx}/{companyIdx}")
-    public BaseResponse<GetCompanyDetailRes> getCompanyDetail(@PathVariable("userIdx") int userIdx, @PathVariable("companyIdx") int companyIdx) throws BaseException{
+    public BaseResponse<Company.DetailRes> getCompanyDetail(@PathVariable("userIdx") int userIdx, @PathVariable("companyIdx") int companyIdx) throws BaseException{
 
         try{
+            Company.DetailRes detailRes = companyProvider.getCompanyDetail(userIdx,companyIdx);
+            return new BaseResponse<>(detailRes);
 
-            GetCompanyDetailRes getCompanyDetailRes = companyProvider.getCompanyDetail(userIdx,companyIdx);
-
-            return new BaseResponse<>(getCompanyDetailRes);
         }catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
-
     }
-
 
     /* 회사 뉴스 조회 */
 
     @ResponseBody
     @GetMapping("/news/{companyIdx}/{newsIdx}")
-    public BaseResponse<GetCompanyNewsRes> getCompanyNews(@PathVariable("companyIdx") int companyIdx, @PathVariable("newsIdx") int newsIdx) throws BaseException{
+    public BaseResponse<Company.NewsRes> getCompanyNews(@PathVariable("companyIdx") int companyIdx, @PathVariable("newsIdx") int newsIdx) throws BaseException{
 
         try{
+            Company.NewsRes newsRes = companyProvider.getCompanyNews(companyIdx,newsIdx);
+            return new BaseResponse<>(newsRes);
 
-            GetCompanyNewsRes getCompanyNewsRes = companyProvider.getCompanyNews(companyIdx,newsIdx);
-
-            return new BaseResponse<>(getCompanyNewsRes);
         }catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
-
     }
 }
 
