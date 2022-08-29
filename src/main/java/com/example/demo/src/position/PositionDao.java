@@ -188,7 +188,7 @@ public class PositionDao {
 
 
         String getEmploymentQuery = "select e.employmentIdx, e.employment, c.companyName, r.name as region, n.name as nation, " +
-                "case when(select b.bookmarkIdx from Bookmark b where b.employmentIdx = e.employmentIdx and b.userIdx = ?) is not null then 1 else 0 end as isBookmark " +
+                "case when(select b.bookmarkIdx from Bookmark b where b.employmentIdx = e.employmentIdx and b.userIdx = ? and b.status = 'ACTIVE') is not null then 1 else 0 end as isBookmark " +
                 "from Employment e" +
                 " JOIN Company c ON e.companyIdx = c.companyIdx JOIN EmpRegion er ON er.employmentIdx = e.employmentIdx " +
                 "JOIN Nation n ON n.nationIdx = er.nationIdx JOIN Region r ON r.regionIdx = er.regionIdx " +
