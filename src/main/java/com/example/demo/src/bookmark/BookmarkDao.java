@@ -63,10 +63,11 @@ public class BookmarkDao {
     /**
      * 북마크 삭제
      */
-    public int modifyBookmarkStatus(Bookmark.BookmarkStatus bookmarkStatusReq){
-        String modifyCartStatusQuery = "UPDATE Bookmark SET status ='DELETE' WHERE bookmarkIdx = ?";
-        Object[] modifyCartStatusParams = new Object[]{bookmarkStatusReq.getBookmarkIdx()};
+    public int modifyBookmarkStatus(Bookmark.BookmarkStatus bookmarkStatusReq, int userIdx) throws BaseException{
+        String modifyBookmarkStatusQuery = "UPDATE Bookmark SET status ='DELETE' WHERE employmentIdx = ? AND userIdx = ?";
+        Object[] modifyBookmarkStatusParams = new Object[]{bookmarkStatusReq.getEmploymentIdx(),userIdx};
 
-        return this.jdbcTemplate.update(modifyCartStatusQuery,modifyCartStatusParams);
+        System.out.println("여기냐?");
+        return this.jdbcTemplate.update(modifyBookmarkStatusQuery,modifyBookmarkStatusParams);
     }
 }
