@@ -135,3 +135,4 @@
 ## 2022.08.29
 #### 1. 북마크 관련 리팩토링 2차 -> DTO 클래스 개선
 #### 2. Company 관련 리팩토링 1차 -> DTO 클래스 개선
+#### 3. 관심 태그 설정 API validation 추가 (request 값 충족 못할시에 대한 validation)
