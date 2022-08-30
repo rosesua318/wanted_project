@@ -91,6 +91,8 @@ public enum BaseResponseStatus {
 
     PATCH_INTEREST_TAG_NO_DATA(false, 2111, "설정할 관심 태그가 없습니다"),
 
+    POST_SEARCH_NO_KEYWORD(false, 2112, "검색할 키워드를 입력하지 않았습니다"),
+
     /**
      * 3000 : Response 오류
      */

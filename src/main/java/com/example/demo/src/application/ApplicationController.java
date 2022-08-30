@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
+import static com.example.demo.config.BaseResponseStatus.POST_SEARCH_NO_KEYWORD;
 
 @RestController
 @RequestMapping("/applications")
@@ -90,6 +91,12 @@ public class ApplicationController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
+            if(postSearchApplyReq.getKeyword().isEmpty()) {
+                return new BaseResponse<>(POST_SEARCH_NO_KEYWORD);
+            }
+            if(postSearchApplyReq.getKeyword().equals("")) {
+                return new BaseResponse<>(POST_SEARCH_NO_KEYWORD);
+            }
             GetApplyRes getApplyRes = applicationProvider.searchApplies(userIdx, postSearchApplyReq);
             return new BaseResponse<>(getApplyRes);
         } catch (BaseException exception) {
@@ -112,6 +119,12 @@ public class ApplicationController {
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            if(postSearchApplyReq.getKeyword().isEmpty()) {
+                return new BaseResponse<>(POST_SEARCH_NO_KEYWORD);
+            }
+            if(postSearchApplyReq.getKeyword().equals("")) {
+                return new BaseResponse<>(POST_SEARCH_NO_KEYWORD);
             }
             GetWritingRes getWritingRes = applicationProvider.searchWritings(userIdx, postSearchApplyReq);
             return new BaseResponse<>(getWritingRes);
