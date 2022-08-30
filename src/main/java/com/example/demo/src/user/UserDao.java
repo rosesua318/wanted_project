@@ -24,10 +24,10 @@ public class UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public List<GetUserRes> getUsers(){
+    public List<User.GetRes> getUsers(){
         String getUsersQuery = "select * from User";
         return this.jdbcTemplate.query(getUsersQuery,
-                (rs,rowNum) -> new GetUserRes(
+                (rs,rowNum) -> new User.GetRes(
                         rs.getInt("userIdx"),
                         rs.getString("userName"),
                         rs.getString("ID"),
@@ -36,11 +36,11 @@ public class UserDao {
                 );
     }
 
-    public List<GetUserRes> getUsersByEmail(String email){
+    public List<User.GetRes> getUsersByEmail(String email){
         String getUsersByEmailQuery = "select * from User where email =?";
         String getUsersByEmailParams = email;
         return this.jdbcTemplate.query(getUsersByEmailQuery,
-                (rs, rowNum) -> new GetUserRes(
+                (rs, rowNum) -> new User.GetRes(
 
                         rs.getInt("userIdx"),
                         rs.getString("userName"),
@@ -51,12 +51,12 @@ public class UserDao {
                 getUsersByEmailParams);
     }
 
-    public GetUserRes getUser(int userIdx){
+    public User.GetRes getUser(int userIdx){
         String getUserQuery = "select userIdx, name, imageUrl, email, phone from User where userIdx = ?";
         int getUserParams = userIdx;
 
         return this.jdbcTemplate.queryForObject(getUserQuery,
-                (rs, rowNum) -> new GetUserRes(
+                (rs, rowNum) -> new User.GetRes(
                         rs.getInt("userIdx"),
                         rs.getString("name"),
                         rs.getString("imageUrl"),
@@ -66,9 +66,9 @@ public class UserDao {
     }
     
 
-    public int createUser(PostUserReq postUserReq){
+    public int createUser(User.Request request){
         String createUserQuery = "insert into User (email, password, name,phone,imageUrl) VALUES (?,?,?,?,?)";
-        Object[] createUserParams = new Object[]{postUserReq.getEmail(), postUserReq.getPassword(), postUserReq.getName(), postUserReq.getPhone(),"https://static.wanted.co.kr/images/profile_default.png"};
+        Object[] createUserParams = new Object[]{request.getEmail(), request.getPassword(), request.getName(), request.getPhone(),"https://static.wanted.co.kr/images/profile_default.png"};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
         String lastInsertIdQuery = "select last_insert_id()";
@@ -84,36 +84,20 @@ public class UserDao {
 
     }
 
-    public int modifyUserInfo(PatchUserReq patchUserReq){
-        String modifyUserNameQuery = "update User set name = ?, email = ?, phone = ? where userIdx = ? "; // 쿼리 문 확인 필요
-        Object[] modifyUserNameParams = new Object[]{patchUserReq.getName(), patchUserReq.getEmail(),patchUserReq.getPhone(),patchUserReq.getUserIdx()};
+    public int modifyUserInfo(User.PatchReq patchReq){
+        String modifyUserNameQuery = "update User set name = ?, email = ?, phone = ? where userIdx = ? ";
+        Object[] modifyUserNameParams = new Object[]{patchReq.getName(), patchReq.getEmail(),patchReq.getPhone(),patchReq.getUserIdx()};
 
         return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
     }
 
-//    public User getPwd(PostLoginReq postLoginReq){
-//        String getPwdQuery = "select userIdx,email,password,name,phone from User where email = ?";
-//        String getPwdParams = postLoginReq.getEmail();
-//
-//        return this.jdbcTemplate.queryForObject(getPwdQuery,
-//                (rs,rowNum)-> new User(
-//                        rs.getInt("userIdx"),
-//                        rs.getString("email"),
-//                        rs.getString("password"),
-//                        rs.getString("name"),
-//                        rs.getString("phone")
-//                ),
-//                getPwdParams
-//                );
-//
-//    }
 
-    public User getPwd(PostLoginReq postLoginReq){
+    public User.Info getPwd(User.LoginReq loginReq){
         String getPwdQuery = "select userIdx,email,password,name,phone from User where email = ?";
-        String getPwdParams = postLoginReq.getEmail();
+        String getPwdParams = loginReq.getEmail();
 
         return this.jdbcTemplate.queryForObject(getPwdQuery,
-                (rs,rowNum)-> new User(
+                (rs,rowNum)-> new User.Info(
                         rs.getInt("userIdx"),
                         rs.getString("email"),
                         rs.getString("password"),
@@ -126,10 +110,10 @@ public class UserDao {
     }
 
 //상태변경
-    public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq){
+    public int modifyUserStatus(User.StatusReq statusReq){
 
         String modifyStatusQuery = "UPDATE User set status = ? where userIdx = ?";
-        Object[] modifyStatusParams = new Object[]{patchUserStatusReq.getStatus(), patchUserStatusReq.getUserIdx()};
+        Object[] modifyStatusParams = new Object[]{statusReq.getStatus(), statusReq.getUserIdx()};
 
         return this.jdbcTemplate.update(modifyStatusQuery,modifyStatusParams);
     }
@@ -137,7 +121,7 @@ public class UserDao {
 
     // 비밀번호 변경
 
-    public int modifyPwd(PatchPwdReq patchPwdReq){
+    public int modifyPwd(User.PatchPwdReq patchPwdReq){
 
         String modfiyPwdQuery = "UPDATE User set password = ? where userIdx = ?";
         Object[] modifyPwdParams = new Object[]{patchPwdReq.getPassword(), patchPwdReq.getUserIdx()};
@@ -154,18 +138,18 @@ public class UserDao {
     }
 
     // 프로필 이미지 변경
-    public int modifyUserImage(PatchUserImage patchUserImage){
+    public int modifyUserImage(User.PatchImage patchImage){
         String modifyUserImageQuery = "UPDATE User SET imageUrl =? WHERE userIdx = ?";
-        Object[] modifyUserImageParams = new Object[]{patchUserImage.getImageUrl(),patchUserImage.getUserIdx()};
+        Object[] modifyUserImageParams = new Object[]{patchImage.getImageUrl(),patchImage.getUserIdx()};
 
         return this.jdbcTemplate.update(modifyUserImageQuery,modifyUserImageParams);
     }
 
     // 비공개,공개 계정 설정
 
-    public int modifyUserIsPrivate(PatchUserPrivate patchUserPrivate){
+    public int modifyUserIsPrivate(User.PatchPrivate patchPrivate){
         String modifyUserImageQuery = "UPDATE User SET isPrivate =? WHERE userIdx = ?";
-        Object[] modifyUserImageParams = new Object[]{patchUserPrivate.getIsPrivate(),patchUserPrivate.getUserIdx()};
+        Object[] modifyUserImageParams = new Object[]{patchPrivate.getIsPrivate(),patchPrivate.getUserIdx()};
 
         return this.jdbcTemplate.update(modifyUserImageQuery,modifyUserImageParams);
     }
@@ -175,7 +159,6 @@ public class UserDao {
 
     public GetSpecialtyRes getSpecialty(int userIdx) {
 
-        System.out.println("실행됨?");
         // 1. JobGroup
         String getJobGroupQuery = "SELECT EC.categoryIdx,EC.category FROM EmploymentCategory AS EC\n" +
                 "JOIN Specialty AS S ON S.categoryIdx = EC.categoryIdx WHERE S.userIdx=?;";
@@ -222,15 +205,15 @@ public class UserDao {
 
     //1. 직군 직무 경력 (스킬 제외)
 
-    public int createSpecialty(PostUserSpecialtyReq userSpecialtyReq) throws BaseException {
+    public int createSpecialty(User.SpecialtyReq specialtyReq) throws BaseException {
 
         String createSpecialtyJobQuery = "INSERT INTO Specialty (categoryIdx,subcategoryIdx,career,userIdx) VALUES (?,?,?,?);";
-        Object[] createSpecialtyJobParams = new Object[]{userSpecialtyReq.getJobGroupIdx(),userSpecialtyReq.getDutyIdx(),userSpecialtyReq.getCareer(),userSpecialtyReq.getUserIdx()};
+        Object[] createSpecialtyJobParams = new Object[]{specialtyReq.getJobGroupIdx(),specialtyReq.getDutyIdx(),specialtyReq.getCareer(),specialtyReq.getUserIdx()};
         this.jdbcTemplate.update(createSpecialtyJobQuery, createSpecialtyJobParams);
 
         String lastInsertIdQuery = "select last_insert_id()";
         int specialtyIdx = this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
-        createSpecialtySkill(userSpecialtyReq.getJobSkillList(),specialtyIdx);
+        createSpecialtySkill(specialtyReq.getJobSkillList(),specialtyIdx);
         return specialtyIdx;
 
     }

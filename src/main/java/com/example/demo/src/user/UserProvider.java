@@ -35,10 +35,10 @@ public class UserProvider {
 
 
 
-    public GetUserRes getUser(int userIdx) throws BaseException {
+    public User.GetRes getUser(int userIdx) throws BaseException {
         try {
-            GetUserRes getUserRes = userDao.getUser(userIdx);
-            return getUserRes;
+            User.GetRes getRes = userDao.getUser(userIdx);
+            return getRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -53,21 +53,21 @@ public class UserProvider {
         }
     }
 
-    public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
+    public User.LoginRes logIn(User.LoginReq loginReq) throws BaseException{
 
 
-        User user = userDao.getPwd(postLoginReq);
+        User.Info info = userDao.getPwd(loginReq);
         String encryptPwd;
         try {
-            encryptPwd=new SHA256().encrypt(postLoginReq.getPassword());
+            encryptPwd=new SHA256().encrypt(loginReq.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(PASSWORD_DECRYPTION_ERROR);
         }
 
-        if(user.getPassword().equals(encryptPwd)){
-            int userIdx = user.getUserIdx();
+        if(info.getPassword().equals(encryptPwd)){
+            int userIdx = info.getUserIdx();
             String jwt = jwtService.createJwt(userIdx);
-            return new PostLoginRes(userIdx,jwt);
+            return new User.LoginRes(userIdx,jwt);
         }
         else{
             throw new BaseException(FAILED_TO_LOGIN);

@@ -19,12 +19,9 @@ public class CompanyController {
 
     @Autowired
     private final CompanyProvider companyProvider;
-    @Autowired
-    private final CompanyDao companyDao;
 
-    public CompanyController(CompanyProvider companyProvider, CompanyDao companyDao) {
+    public CompanyController(CompanyProvider companyProvider) {
         this.companyProvider = companyProvider;
-        this.companyDao = companyDao;
     }
 
     /*

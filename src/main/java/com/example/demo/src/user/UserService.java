@@ -46,34 +46,34 @@ public class UserService {
     }
 
     //POST
-    public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
+    public User.PostResponse createUser(User.Request request) throws BaseException {
         //중복
-        if(userProvider.checkEmail(postUserReq.getEmail()) ==1){
+        if(userProvider.checkEmail(request.getEmail()) ==1){
             throw new BaseException(POST_USERS_EXISTS_EMAIL);
         }
 
         String pwd;
         try{
             //암호화
-            pwd = new SHA256().encrypt(postUserReq.getPassword());
-            postUserReq.setPassword(pwd);
+            pwd = new SHA256().encrypt(request.getPassword());
+            request.setPassword(pwd);
 
         } catch (Exception ignored) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
         try{
-            int userIdx = userDao.createUser(postUserReq);
+            int userIdx = userDao.createUser(request);
             //jwt 발급.
             String jwt = jwtService.createJwt(userIdx);
-            return new PostUserRes(jwt,userIdx);
+            return new User.PostResponse(jwt,userIdx);
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public void modifyUserInfo(PatchUserReq patchUserReq) throws BaseException {
+    public void modifyUserInfo(User.PatchReq patchReq) throws BaseException {
         try{
-            int result = userDao.modifyUserInfo(patchUserReq);
+            int result = userDao.modifyUserInfo(patchReq);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_USERNAME);
             }
@@ -83,9 +83,9 @@ public class UserService {
     }
 
     // 유저 상태 변경
-    public void modifyUserStatus(PatchUserStatusReq patchUserStatusReq) throws BaseException {
+    public void modifyUserStatus(User.StatusReq statusReq) throws BaseException {
         try {
-            int result = userDao.modifyUserStatus(patchUserStatusReq);
+            int result = userDao.modifyUserStatus(statusReq);
             if (result == 0) {
                 throw new BaseException(MODIFY_FAIL_STATUS);
             }
@@ -95,7 +95,7 @@ public class UserService {
         }
     }
 
-    public void modifyPwd(PatchPwdReq patchPwdReq) throws BaseException{
+    public void modifyPwd(User.PatchPwdReq patchPwdReq) throws BaseException{
 
         // 비밀번호 암호화
         String pwd;
@@ -119,16 +119,16 @@ public class UserService {
 
     // 프로필 이미지 변경
 
-    public void modifyUserImage(PatchUserImage patchUserImage) throws BaseException{
+    public void modifyUserImage(User.PatchImage patchImage) throws BaseException{
 
-        int userIdx = patchUserImage.getUserIdx();
+        int userIdx = patchImage.getUserIdx();
         try{
             // userIdx 검증 (탈퇴한 회원이거나 등)
             if(userIdx != userDao.checkUser(userIdx)){
                 throw new BaseException(INVALID_USER_INACTIVE);
             }
 
-            int result = userDao.modifyUserImage(patchUserImage);
+            int result = userDao.modifyUserImage(patchImage);
             if(result ==0){
                 throw new BaseException(MODIFY_FAIL_USER_IMAGE);
             }
@@ -138,15 +138,15 @@ public class UserService {
     }
     // 계정 공개,비공개 설정
 
-    public void modifyUserIsPrivate(PatchUserPrivate patchUserPrivate) throws BaseException{
-        int userIdx = patchUserPrivate.getUserIdx();
+    public void modifyUserIsPrivate(User.PatchPrivate patchPrivate) throws BaseException{
+        int userIdx = patchPrivate.getUserIdx();
 
         try{
             // userIdx 검증 (탈퇴한 회원이거나 등)
             if(userIdx != userDao.checkUser(userIdx)){
                 throw new BaseException(INVALID_USER_INACTIVE);
             }
-            int result = userDao.modifyUserIsPrivate(patchUserPrivate);
+            int result = userDao.modifyUserIsPrivate(patchPrivate);
             if(result ==0){
                 throw new BaseException(MODIFY_FAIL_USER_PRIVATE);
             }
@@ -156,10 +156,10 @@ public class UserService {
     }
 
   //   전문분야 생성
-    public int createSpecialty(PostUserSpecialtyReq postUserSpecialtyReq) throws BaseException{
+    public int createSpecialty(User.SpecialtyReq specialtyReq) throws BaseException{
 
         try{
-            int specialtyIdx = userDao.createSpecialty(postUserSpecialtyReq);
+            int specialtyIdx = userDao.createSpecialty(specialtyReq);
 
             return specialtyIdx;
 

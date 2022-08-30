@@ -47,7 +47,7 @@ public class UserController {
     // Path-variable
     @ResponseBody
     @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/users/:userIdx
-    public BaseResponse<GetUserRes> getUser(@PathVariable("userIdx") int userIdx) {
+    public BaseResponse<User.GetRes> getUser(@PathVariable("userIdx") int userIdx) {
         // Get Users
         // 일단은 가장 기본적인 이름,이메일,전화번호만 조회하도록 함. 이후 이력서 등등.. 구현 예정
         try{
@@ -57,8 +57,8 @@ public class UserController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetUserRes getUserRes = userProvider.getUser(userIdx);
-            return new BaseResponse<>(getUserRes);
+            User.GetRes getRes = userProvider.getUser(userIdx);
+            return new BaseResponse<>(getRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -73,41 +73,41 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("")
-    public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
+    public BaseResponse<User.PostResponse> createUser(@RequestBody User.Request request) {
 
 
         try {
             // @Valid 를 이용하고 싶었지만, 템플릿 구조 상 ControllerAdvice를 사용하긴 애매해서 if문으로 처리.
         // 1. 이메일 주소
-        if (postUserReq.getEmail() == null || postUserReq.getEmail() =="") {
+        if (request.getEmail() == null || request.getEmail() =="") {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
 
         // 2. 비밀번호
-        if (postUserReq.getPassword() == null || postUserReq.getPassword() == "") {
+        if (request.getPassword() == null || request.getPassword() == "") {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }
 
         // 3. 이름
-        if(postUserReq.getName() == null || postUserReq.getName() == ""){
+        if(request.getName() == null || request.getName() == ""){
             return new BaseResponse<>(POST_USERS_EMPTY_NAME);
         }
 
         // 4. 전화번호
-        if (postUserReq.getPhone() == null || postUserReq.getPhone() == "") {
+        if (request.getPhone() == null || request.getPhone() == "") {
             return new BaseResponse<>(POST_USERS_EMPTY_PHONE);
         }
 
         // 이메일 정규표현
-        if (!isRegexEmail(postUserReq.getEmail())) {  // 정규표현식과 다른 형식으로 받으면 invalid (이메일 주소 형식)
+        if (!isRegexEmail(request.getEmail())) {  // 정규표현식과 다른 형식으로 받으면 invalid (이메일 주소 형식)
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
         //  비밀번호 정규표현
-        if (!isRegexPassword(postUserReq.getPassword())) {  // 특수문자 / 문자 / 숫자 포함 형태의 8~20자리 이내의 암호 정규식
+        if (!isRegexPassword(request.getPassword())) {  // 특수문자 / 문자 / 숫자 포함 형태의 8~20자리 이내의 암호 정규식
             return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
         }
-            PostUserRes postUserRes = userService.createUser(postUserReq);
-            return new BaseResponse<>(postUserRes);
+            User.PostResponse response = userService.createUser(request);
+            return new BaseResponse<>(response);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -120,22 +120,22 @@ public class UserController {
      */
     @ResponseBody
     @PostMapping("/login")
-    public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
+    public BaseResponse<User.LoginRes> logIn(@RequestBody User.LoginReq loginReq){
         try{
 
             // 기본 validation. 아이디(이메일) , 비밀번호를 입력하지 않은 경우
-            if(postLoginReq.getEmail() == null){
+            if(loginReq.getEmail() == null){
                 return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
             }
-            if(postLoginReq.getPassword() == null){
+            if(loginReq.getPassword() == null){
                 return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
             }
 
-            if(userProvider.checkEmail(postLoginReq.getEmail())==0){
+            if(userProvider.checkEmail(loginReq.getEmail())==0){
                 return new BaseResponse<>(FAILED_TO_LOGIN);
             }
-            PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
-            return new BaseResponse<>(postLoginRes);
+            User.LoginRes loginRes = userProvider.logIn(loginReq);
+            return new BaseResponse<>(loginRes);
         } catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -147,8 +147,8 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/login/email")
-    public BaseResponse<String> logInEmail(@RequestBody PostLoginEmailReq postLoginEmailReq){
-        String email = postLoginEmailReq.getEmail();
+    public BaseResponse<String> logInEmail(@RequestBody User.LoginEmailReq loginEmailReq){
+        String email = loginEmailReq.getEmail();
         try{
             if(email == null){
                 return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
@@ -169,7 +169,7 @@ public class UserController {
      */
     @ResponseBody
     @PatchMapping("/{userIdx}")
-    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody PatchUserReq patchUserReq){
+    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User.PatchReq patchReq){
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -178,12 +178,12 @@ public class UserController {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             // body,파라미터 유저 인덱스 검증
-            if (userIdx != patchUserReq.getUserIdx()){
+            if (userIdx != patchReq.getUserIdx()){
                 return new BaseResponse<>(INVALID_USER_IDX);
             }
 
            // 변경 사항 : 이름, 이메일, 전화번호(현재 전화번호 인증하기 기능 제외)
-            userService.modifyUserInfo(patchUserReq);
+            userService.modifyUserInfo(patchReq);
             String result = "회원 정보 수정 완료되었습니다.";
         return new BaseResponse<>(result);
         } catch (BaseException exception) {
@@ -196,7 +196,7 @@ public class UserController {
      */
     @ResponseBody
     @PatchMapping("/pwd/{userIdx}") //
-    public BaseResponse<String> modifyUserStatus(@PathVariable("userIdx") int userIdx, @RequestBody PwdModify pwdModify){
+    public BaseResponse<String> modifyUserStatus(@PathVariable("userIdx") int userIdx, @RequestBody User.PwdModify pwdModify){
         try{
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -205,7 +205,7 @@ public class UserController {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }  // 이 부분까지는 유저가 사용하는 기능 중 유저에 대한 보안이 철저히 필요한 api 에서 사용
 
-            PatchPwdReq patchPwdReq = new PatchPwdReq(userIdx, pwdModify.getPassword());
+            User.PatchPwdReq patchPwdReq = new User.PatchPwdReq(userIdx, pwdModify.getPassword());
             userService.modifyPwd(patchPwdReq);
 
             String result = "비밀번호 변경이 완료되었습니다.";
@@ -225,7 +225,7 @@ public class UserController {
 
     @ResponseBody
     @PatchMapping("/status/{userIdx}") // PATCH /users/status/:userIdx
-    public BaseResponse<String> modifyUserStatus(@PathVariable("userIdx") int userIdx, @RequestBody UserStatus userStatus){
+    public BaseResponse<String> modifyUserStatus(@PathVariable("userIdx") int userIdx, @RequestBody User.Status status){
         try{
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -235,12 +235,12 @@ public class UserController {
             }  // 이 부분까지는 유저가 사용하는 기능 중 유저에 대한 보안이 철저히 필요한 api 에서 사용
 
             // body,파라미터 유저 인덱스 검증
-            if (userIdx != userStatus.getUserIdx()){
+            if (userIdx != status.getUserIdx()){
                 return new BaseResponse<>(INVALID_USER_IDX);
             }
 
-            PatchUserStatusReq patchUserStatusReq = new PatchUserStatusReq(userIdx, userStatus.getStatus());
-            userService.modifyUserStatus(patchUserStatusReq);
+            User.StatusReq statusReq = new User.StatusReq(userIdx, status.getStatus());
+            userService.modifyUserStatus(statusReq);
 
             String result = "탈퇴가 완료되었습니다.";
             return new BaseResponse<>(result);
@@ -257,7 +257,7 @@ public class UserController {
 
     @ResponseBody
     @PatchMapping("/profiles/{userIdx}")
-    public BaseResponse<String> modifyUserImage(@PathVariable ("userIdx") int userIdx, @RequestBody PatchUserImage patchUserImage){
+    public BaseResponse<String> modifyUserImage(@PathVariable ("userIdx") int userIdx, @RequestBody User.PatchImage patchImage){
 
        try {
            //jwt에서 idx 추출.
@@ -269,11 +269,11 @@ public class UserController {
            }
 
            // body의 유저인덱스와 파라미터 유저 인덱스 검증.
-           if (userIdx != patchUserImage.getUserIdx()){
+           if (userIdx != patchImage.getUserIdx()){
                return new BaseResponse<>(INVALID_USER_IDX);
            }
 
-           userService.modifyUserImage(patchUserImage);
+           userService.modifyUserImage(patchImage);
            String result = "프로필 이미지가 변경되었습니다.";
 
            return new BaseResponse<>(result);
@@ -289,7 +289,7 @@ public class UserController {
 
     @ResponseBody
     @PatchMapping("/private/{userIdx}")
-    public BaseResponse<String> modifyUserIsPrivate(@PathVariable ("userIdx") int userIdx,@RequestBody PatchUserPrivate patchUserPrivate){
+    public BaseResponse<String> modifyUserIsPrivate(@PathVariable ("userIdx") int userIdx,@RequestBody User.PatchPrivate patchPrivate){
 
         try{
             //jwt에서 idx 추출.
@@ -299,14 +299,14 @@ public class UserController {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             // body,파라미터 유저 인덱스 검증
-            if (userIdx != patchUserPrivate.getUserIdx()){
+            if (userIdx != patchPrivate.getUserIdx()){
                 return new BaseResponse<>(INVALID_USER_IDX);
             }
 
-            userService.modifyUserIsPrivate(patchUserPrivate);
+            userService.modifyUserIsPrivate(patchPrivate);
 
             String result;
-            if(patchUserPrivate.getIsPrivate() == 0){
+            if(patchPrivate.getIsPrivate() == 0){
                result = "공개 계정";
             }
             else
@@ -349,7 +349,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/profiles/specialty/{userIdx}")
-    public BaseResponse<String> createSpecialty(@PathVariable ("userIdx") int userIdx, @RequestBody PostUserSpecialtyReq postUserSpecialtyReq){
+    public BaseResponse<String> createSpecialty(@PathVariable ("userIdx") int userIdx, @RequestBody User.SpecialtyReq specialtyReq){
 
         try{
             //jwt에서 idx 추출.
@@ -359,7 +359,7 @@ public class UserController {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
 
-            int specialtyIdx = userService.createSpecialty(postUserSpecialtyReq);
+            int specialtyIdx = userService.createSpecialty(specialtyReq);
             String result = "specialtyIdx = " + specialtyIdx;
             return new BaseResponse<>(result);
         }catch (BaseException e){
