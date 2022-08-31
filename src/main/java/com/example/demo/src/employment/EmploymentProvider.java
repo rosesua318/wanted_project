@@ -1,8 +1,7 @@
 package com.example.demo.src.employment;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.employment.model.GetEmpDetailRes;
-import com.example.demo.src.employment.model.GetEmpHomeRes;
+import com.example.demo.src.employment.model.Employment;
 import com.example.demo.src.employment.model.GetEmploymentInfoRes;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -41,11 +40,11 @@ public class EmploymentProvider {
 
     // 채용 홈 화면(비회원)
 
-    public GetEmpHomeRes getEmpHome() throws BaseException{
+    public Employment.HomeRes getEmpHome() throws BaseException{
         try{
-            GetEmpHomeRes getEmpHomeRes = employmentDao.getEmpHome();
+            Employment.HomeRes homeRes = employmentDao.getEmpHome();
 
-            return getEmpHomeRes;
+            return homeRes;
         }catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
@@ -53,10 +52,10 @@ public class EmploymentProvider {
     }
 
     // 채용 홈 화면(회원)
-    public GetEmpHomeRes getEmpHome(int userIdx) throws BaseException{
+    public Employment.HomeRes getEmpHome(int userIdx) throws BaseException{
         try{
-            GetEmpHomeRes getEmpHomeRes = employmentDao.getEmpHome(userIdx);
-            return getEmpHomeRes;
+            Employment.HomeRes homeRes = employmentDao.getEmpHome(userIdx);
+            return homeRes;
         }catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
@@ -66,11 +65,11 @@ public class EmploymentProvider {
 
  //    채용 포지션 상세 페이지
 
-    public GetEmpDetailRes getEmpDetail(int userIdx, int employmentIdx) throws BaseException{
+    public Employment.DetailRes getEmpDetail(int userIdx, int employmentIdx) throws BaseException{
 
         try{
-            GetEmpDetailRes getEmpDetailRes = employmentDao.getEmpDetail(userIdx,employmentIdx);
-            return getEmpDetailRes;
+            Employment.DetailRes detailRes = employmentDao.getEmpDetail(userIdx,employmentIdx);
+            return detailRes;
         }catch(Exception e){
             throw new BaseException(DATABASE_ERROR);
         }

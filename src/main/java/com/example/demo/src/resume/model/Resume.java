@@ -31,7 +31,6 @@ public class Resume {
     private String introduce;
 
     public Resume(int resumeIdx,String language,String title,String introduce){
-        System.out.println("Resume 생성자 사용 되었는지");
         this.resumeIdx = resumeIdx;
         this.language = language;
         this.title = title;

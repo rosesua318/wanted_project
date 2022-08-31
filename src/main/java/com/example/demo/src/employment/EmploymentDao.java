@@ -67,7 +67,7 @@ public class EmploymentDao {
 //    채용 홈 화면 조회 (비회원 용)
 
 
-    public GetEmpHomeRes getEmpHome() {
+    public Employment.HomeRes getEmpHome() {
 
         String getBannerQuery = "select bannerIdx,imageUrl from Banner where type = 1 LIMIT 5";
         List<EmpBanner> empBanners = this.jdbcTemplate.query(getBannerQuery,
@@ -132,11 +132,11 @@ public class EmploymentDao {
                 companyCnt = companyIdx;
         }
 
-        return new GetEmpHomeRes("non-members", empBanners,employmentInfo,companyInfo);
+        return new Employment.HomeRes("non-members", empBanners,employmentInfo,companyInfo);
     }
 
     // 회원 용 채용 홈페이지
-    public GetEmpHomeRes getEmpHome(int userIdx) {
+    public Employment.HomeRes getEmpHome(int userIdx) {
 
 
 
@@ -210,11 +210,11 @@ public class EmploymentDao {
             else
                 companyCnt = companyIdx;
         }
-        return new GetEmpHomeRes(recommend, empBanners,employmentInfo,companyInfo);
+        return new Employment.HomeRes(recommend, empBanners,employmentInfo,companyInfo);
     }
 
 
-    public GetEmpDetailRes getEmpDetail(int userIdx, int employmentIdx){
+    public Employment.DetailRes getEmpDetail(int userIdx, int employmentIdx){
 
 
         // 1. EmploymentImg
@@ -224,8 +224,8 @@ public class EmploymentDao {
 
         int getEmploymentParams = employmentIdx;
 
-        List<EmploymentImg> employmentImgList = this.jdbcTemplate.query(employmentImgQuery,
-                (rs,rowNum)-> new EmploymentImg(
+        List<Employment.Image> employmentImgList = this.jdbcTemplate.query(employmentImgQuery,
+                (rs,rowNum)-> new Employment.Image(
                         rs.getInt("employmentIdx"),
                         rs.getInt("employmentImgIdx"),
                         rs.getString("employmentImg")),
@@ -291,7 +291,7 @@ public class EmploymentDao {
                 getEmploymentParams
                 );
 
-        return new GetEmpDetailRes(employmentImgList,companyEmpInfo,tag,empDetail,skill);
+        return new Employment.DetailRes(employmentImgList,companyEmpInfo,tag,empDetail,skill);
     }
 
     // 지원하기

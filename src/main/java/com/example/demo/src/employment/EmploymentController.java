@@ -3,8 +3,7 @@ package com.example.demo.src.employment;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.employment.model.GetEmpDetailRes;
-import com.example.demo.src.employment.model.GetEmpHomeRes;
+import com.example.demo.src.employment.model.Employment;
 import com.example.demo.src.employment.model.PostApplicationReq;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -46,11 +45,11 @@ public class EmploymentController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<GetEmpHomeRes> getEmpHome() {
+    public BaseResponse<Employment.HomeRes> getEmpHome() {
 
         try{
-            GetEmpHomeRes getEmpHomeRes = employmentProvider.getEmpHome();
-            return new BaseResponse<>(getEmpHomeRes);
+            Employment.HomeRes homeRes = employmentProvider.getEmpHome();
+            return new BaseResponse<>(homeRes);
         }catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -64,11 +63,11 @@ public class EmploymentController {
 
     @ResponseBody
     @GetMapping("/{userIdx}")
-    public BaseResponse<GetEmpHomeRes> getEmpHome(@PathVariable("userIdx") int userIdx) {
+    public BaseResponse<Employment.HomeRes> getEmpHome(@PathVariable("userIdx") int userIdx) {
 
         try{
-            GetEmpHomeRes getEmpHomeRes = employmentProvider.getEmpHome(userIdx);
-            return new BaseResponse<>(getEmpHomeRes);
+            Employment.HomeRes homeRes = employmentProvider.getEmpHome(userIdx);
+            return new BaseResponse<>(homeRes);
         }catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -81,11 +80,11 @@ public class EmploymentController {
 
     @ResponseBody
     @GetMapping("/{userIdx}/{employmentIdx}")
-    public BaseResponse<GetEmpDetailRes> getEmpDetail(@PathVariable("userIdx") int userIdx, @PathVariable("employmentIdx") int employmentIdx) {
+    public BaseResponse<Employment.DetailRes> getEmpDetail(@PathVariable("userIdx") int userIdx, @PathVariable("employmentIdx") int employmentIdx) {
 
         try{
-            GetEmpDetailRes getEmpDetailRes = employmentProvider.getEmpDetail(userIdx,employmentIdx);
-            return new BaseResponse<>(getEmpDetailRes);
+            Employment.DetailRes detailRes = employmentProvider.getEmpDetail(userIdx,employmentIdx);
+            return new BaseResponse<>(detailRes);
         }catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
