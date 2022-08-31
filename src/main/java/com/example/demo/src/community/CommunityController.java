@@ -316,7 +316,7 @@ public class CommunityController {
      */
     @ResponseBody
     @PutMapping(value = "/{userIdx}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BaseResponse<PutPostingRes> updatePosting(@PathVariable("userIdx") int userIdx, @RequestParam(value = "image", required = false) MultipartFile multipartFile, @RequestParam("json") String json) throws BaseException {
+    public BaseResponse<PutPostingRes> updatePosting(@PathVariable("userIdx") int userIdx, @RequestPart(value = "image", required = false) MultipartFile multipartFile, @RequestPart("json") PutPostingReq json) throws BaseException {
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -324,18 +324,15 @@ public class CommunityController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
-            PutPostingReq putPostingReq = objectMapper.readValue(json, new TypeReference<PutPostingReq>() {
-            });
 
-            if(communityProvider.checkPostingActive(userIdx, putPostingReq.getPostingIdx()) != 0) {
-                if(putPostingReq.getTags().size() < 1) {
+            if(communityProvider.checkPostingActive(userIdx, json.getPostingIdx()) != 0) {
+                if(json.getTags().size() < 1) {
                     return new BaseResponse<>(POST_POSTING_NO_TAG);
                 }
-                if(putPostingReq.getTitle().equals("")) {
+                if(json.getTitle().equals("")) {
                     return new BaseResponse<>(POST_POSTING_NO_TITLE);
                 }
-                if(putPostingReq.getContent().equals("")) {
+                if(json.getContent().equals("")) {
                     return new BaseResponse<>(POST_POSTING_NO_CONTENT);
                 }
                 System.out.println(multipartFile);
@@ -348,9 +345,9 @@ public class CommunityController {
 
                 PutPostingRes putPostingRes;
                 if(imageUrl.equals("") || imageUrl.isEmpty()) {
-                    putPostingRes = communityService.updatePosting(userIdx, putPostingReq);
+                    putPostingRes = communityService.updatePosting(userIdx, json);
                 } else {
-                    putPostingRes = communityService.updatePostingWithImage(userIdx, imageUrl, putPostingReq);
+                    putPostingRes = communityService.updatePostingWithImage(userIdx, imageUrl, json);
                 }
                 return new BaseResponse<>(putPostingRes);
             } else {
@@ -362,6 +359,28 @@ public class CommunityController {
             return new BaseResponse<>((exception.getStatus()));
         } catch (IOException exception) {
             return new BaseResponse<>(FAIL_IMAGE_UPLOAD);
+        }
+    }
+
+    /**
+     * 게시글 수정 태그 조회 API
+     * [GET] /communities/tags/:postingIdx/:userIdx
+     * @return BaseResponse<GetProfileRes>
+     */
+    @ResponseBody
+    @GetMapping("/tags/{postingIdx}/{userIdx}")
+    public BaseResponse<GetTagRes> getTag(@PathVariable("postingIdx") int postingIdx, @PathVariable("userIdx") int userIdx) throws BaseException {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetTagRes getTagRes = communityProvider.getTag(postingIdx, userIdx);
+            return new BaseResponse<>(getTagRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
         }
     }
 

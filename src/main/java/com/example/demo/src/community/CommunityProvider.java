@@ -152,4 +152,12 @@ public class CommunityProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public GetTagRes getTag(int postingIdx, int userIdx) throws BaseException {
+        try {
+            return communityDao.getTag(postingIdx, userIdx);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
