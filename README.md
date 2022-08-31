@@ -146,3 +146,4 @@
 #### 1. 검색하기 기능 API validation 
 #### 2. Follow 리팩토링 
 #### 3. 소셜로그인 반영(카카오)
+#### 4. 게시글 작성 기능 API 클라이언트 요청으로 request 타입 requestParam에서 requestPart로 변경 (formdata로 request 받을 수 있도록)
