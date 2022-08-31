@@ -244,7 +244,7 @@ public class CommunityController {
      */
     @ResponseBody
     @PostMapping(value = "/{userIdx}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BaseResponse<PostPostingRes> createPosting(@PathVariable("userIdx") int userIdx, @RequestParam(value = "image", required = false) MultipartFile multipartFile, @RequestParam("json") String json) throws BaseException {
+    public BaseResponse<PostPostingRes> createPosting(@PathVariable("userIdx") int userIdx, @RequestPart(value = "image", required = false) MultipartFile multipartFile, @RequestPart(value = "json") PostPostingReq json) throws BaseException {
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -252,16 +252,13 @@ public class CommunityController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
-            PostPostingReq postPostingReq = objectMapper.readValue(json, new TypeReference<PostPostingReq>() {
-            });
-            if(postPostingReq.getTags().size() < 1) {
+            if(json.getTags().size() < 1) {
                 return new BaseResponse<>(POST_POSTING_NO_TAG);
             }
-            if(postPostingReq.getTitle().equals("")) {
+            if(json.getTitle().equals("")) {
                 return new BaseResponse<>(POST_POSTING_NO_TITLE);
             }
-            if(postPostingReq.getContent().equals("")) {
+            if(json.getContent().equals("")) {
                 return new BaseResponse<>(POST_POSTING_NO_CONTENT);
             }
             System.out.println(multipartFile);
@@ -274,9 +271,9 @@ public class CommunityController {
 
             PostPostingRes postPostingRes;
             if(imageUrl.equals("") || imageUrl.isEmpty()) {
-                postPostingRes = communityService.createPosting(userIdx, postPostingReq);
+                postPostingRes = communityService.createPosting(userIdx, json);
             } else {
-                postPostingRes = communityService.createPostingWithImage(userIdx, imageUrl, postPostingReq);
+                postPostingRes = communityService.createPostingWithImage(userIdx, imageUrl, json);
             }
             return new BaseResponse<>(postPostingRes);
         } catch (BaseException exception) {
