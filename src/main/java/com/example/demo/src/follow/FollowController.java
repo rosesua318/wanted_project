@@ -3,9 +3,7 @@ package com.example.demo.src.follow;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.follow.model.PatchFollowStatusReq;
-import com.example.demo.src.follow.model.PostFollowReq;
-import com.example.demo.src.follow.model.PostFollowRes;
+import com.example.demo.src.follow.model.Follow;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,15 +36,15 @@ public class FollowController {
     // 팔로우 등록하기
     @ResponseBody
     @PostMapping("{userIdx}")
-    public BaseResponse<PostFollowRes> createFollow(@PathVariable("userIdx") int userIdx, @RequestBody PostFollowReq postFollowReq) throws BaseException {
+    public BaseResponse<Follow.PostRes> createFollow(@PathVariable("userIdx") int userIdx, @RequestBody Follow.PostReq postReq) throws BaseException {
 
         try {
 
-            if ((followProvider.checkFollows(postFollowReq.getUserIdx(), postFollowReq.getCompanyIdx())) == 1) {
+            if ((followProvider.checkFollows(postReq.getUserIdx(), postReq.getCompanyIdx())) == 1) {
                 throw new BaseException(POST_FOLLOW_EXISTS);
             }
-            PostFollowRes postFollowRes = followService.createFollow(postFollowReq.getUserIdx(), postFollowReq.getCompanyIdx());
-            return new BaseResponse<>(postFollowRes);
+            Follow.PostRes postRes = followService.createFollow(postReq.getUserIdx(), postReq.getCompanyIdx());
+            return new BaseResponse<>(postRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -54,10 +52,10 @@ public class FollowController {
 
     @ResponseBody
     @PatchMapping("/status/{userIdx}")
-    public BaseResponse<String> deleteFollow(@PathVariable("userIdx") int userIdx, @RequestBody PatchFollowStatusReq patchFollowStatusReq) {
+    public BaseResponse<String> deleteFollow(@PathVariable("userIdx") int userIdx, @RequestBody Follow.PatchStatusReq patchStatusReq) {
         try {
 
-            int companyIdx = patchFollowStatusReq.getCompanyIdx();
+            int companyIdx = patchStatusReq.getCompanyIdx();
             if ((followProvider.checkFollows(userIdx, companyIdx)) != 0) {
                 followService.deleteFollow(userIdx, companyIdx);
                 return new BaseResponse<>("팔로우가 삭제되었습니다.");

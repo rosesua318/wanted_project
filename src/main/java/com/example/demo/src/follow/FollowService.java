@@ -2,9 +2,7 @@ package com.example.demo.src.follow;
 
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.BaseResponseStatus;
-import com.example.demo.src.follow.model.PostFollowReq;
-import com.example.demo.src.follow.model.PostFollowRes;
+import com.example.demo.src.follow.model.Follow;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +30,11 @@ public class FollowService {
 
     // 팔로우 등록하기
 
-    public PostFollowRes createFollow(int userIdx, int companyIdx) throws BaseException {
+    public Follow.PostRes createFollow(int userIdx, int companyIdx) throws BaseException {
 
         try{
             int followIdx =  followDao.createFollow(userIdx,companyIdx);
-            return new PostFollowRes(followIdx);
+            return new Follow.PostRes(followIdx);
 
         }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
