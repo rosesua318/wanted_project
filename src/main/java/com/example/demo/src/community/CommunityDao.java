@@ -1,6 +1,7 @@
 package com.example.demo.src.community;
 
 import com.example.demo.src.community.model.*;
+import com.example.demo.src.wanted.model.InterestTagSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -543,6 +544,55 @@ public class CommunityDao {
 
 
         return new GetRecommOpenRes(1, communityTags, recommTag, postingList);
+    }
+
+    public GetTagRes getTag(int postingIdx, int userIdx) {
+        String getPostingTagQuery = "select ct.ctIdx, ct.name from PostingTag pt " +
+                "JOIN CommunityTag ct ON ct.ctIdx = pt.ctIdx where pt.postingIdx = ?";
+        String getPostingTagParams = String.valueOf(postingIdx);
+
+        List<CommunityTag> postingTags = this.jdbcTemplate.query(getPostingTagQuery,
+                (rs, rowNum) -> new CommunityTag(
+                        rs.getInt("ctIdx"),
+                        rs.getString("name")
+                ), getPostingTagParams);
+
+
+        String getBigQuery = "select itIdx, name from InterestTag";
+        List<TagSet> tagSets = this.jdbcTemplate.query(getBigQuery,
+                (rs, rowNum) -> new TagSet(
+                        rs.getInt("itIdx"),
+                        rs.getString("name")));
+
+        for(TagSet t : tagSets) {
+            String getTagQuery = "select h.homecategoryIdx, h.homecategory " +
+                    "from HomeCategory h " +
+                    "JOIN InterestClassification ic ON ic.homecategoryIdx = h.homecategoryIdx " +
+                    "where ic.itIdx = ?";
+            Object[] getTagParams = new Object[]{ t.getItIdx()};
+
+            List<SettingTagSet> tags = this.jdbcTemplate.query(getTagQuery,
+                    (rs, rowNum) -> new SettingTagSet(
+                            rs.getInt("homecategoryIdx"),
+                            rs.getString("homecategory"),
+                            0),
+                    getTagParams);
+
+            for(SettingTagSet ts : tags) {
+                for(CommunityTag ct : postingTags) {
+                    if(ct.getName().equals(ts.getName())) {
+                        ts.setIsSet(1);
+                    }
+
+                }
+            }
+
+
+
+            t.setTags(tags);
+        }
+
+        return new GetTagRes(tagSets);
     }
 
     public GetRecommRes getRecommTab(int userIdx) {
