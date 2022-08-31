@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
-import static com.example.demo.config.BaseResponseStatus.PATCH_SEARCH_RECORDS_NO_DATA;
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/searches")
@@ -39,6 +38,12 @@ public class SearchController {
     @PostMapping("/tags")
     public BaseResponse<PostSearchTagRes> searchTagOpen(@RequestBody PostSearchTagReq postSearchTagReq) throws BaseException {
         try {
+            if(postSearchTagReq.getTag().isEmpty()) {
+                return new BaseResponse<>(POST_SEARCH_NO_TAG);
+            }
+            if(postSearchTagReq.getTag().equals("")) {
+                return new BaseResponse<>(POST_SEARCH_NO_TAG);
+            }
             PostSearchTagRes postSearchTags = searchService.searchTagOpen(postSearchTagReq);
             return new BaseResponse<>(postSearchTags);
         } catch (BaseException exception) {
@@ -60,6 +65,14 @@ public class SearchController {
             if(userIdx != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
+
+            if(postSearchTagReq.getTag().isEmpty()) {
+                return new BaseResponse<>(POST_SEARCH_NO_TAG);
+            }
+            if(postSearchTagReq.getTag().equals("")) {
+                return new BaseResponse<>(POST_SEARCH_NO_TAG);
+            }
+
             PostSearchTagRes postSearchTags = searchService.searchTag(userIdx, postSearchTagReq);
             return new BaseResponse<>(postSearchTags);
         } catch (BaseException exception) {
@@ -119,6 +132,12 @@ public class SearchController {
             if(userIdx != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
+            if(String.valueOf(patchRecordReq.getSearchIdx()).isEmpty()) {
+                return new BaseResponse<>(PATCH_SEARCH_RECORD_NO_IDX);
+            }
+            if(String.valueOf(patchRecordReq.getSearchIdx()).equals("")) {
+                return new BaseResponse<>(PATCH_SEARCH_RECORD_NO_IDX);
+            }
             if(searchProvider.checkSearchRecords(userIdx, patchRecordReq.getSearchIdx()) != 0) {
                 searchService.deleteSearchRecords(userIdx, patchRecordReq.getSearchIdx());
                 return new BaseResponse<>("삭제되었습니다.");
@@ -139,6 +158,9 @@ public class SearchController {
     @PostMapping()
     public BaseResponse<PostSearchRes> searchKeywordOpen(@RequestBody PostSearchReq postSearchReq) throws BaseException {
         try {
+            if(postSearchReq.getKeyword().isEmpty()) {
+                return new BaseResponse<>(POST_SEARCH_NO_KEYWORD);
+            }
             PostSearchRes postSearchRes = searchService.searchKeywordOpen(postSearchReq);
             return new BaseResponse<>(postSearchRes);
         } catch (BaseException exception) {
@@ -155,6 +177,9 @@ public class SearchController {
     @PostMapping("/{userIdx}")
     public BaseResponse<PostSearchRes> searchKeyword(@PathVariable("userIdx") int userIdx, @RequestBody PostSearchReq postSearchReq) throws BaseException {
         try {
+            if(postSearchReq.getKeyword().isEmpty()) {
+                return new BaseResponse<>(POST_SEARCH_NO_KEYWORD);
+            }
             if(searchProvider.checkSearchRecordKeyword(userIdx, postSearchReq.getKeyword()) != 0) {
                 searchService.modifySearchRecord(userIdx, postSearchReq.getKeyword());
             } else {

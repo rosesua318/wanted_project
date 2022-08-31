@@ -93,6 +93,9 @@ public enum BaseResponseStatus {
 
     POST_SEARCH_NO_KEYWORD(false, 2112, "검색할 키워드를 입력하지 않았습니다"),
 
+    POST_SEARCH_NO_TAG(false, 2113, "태그를 입력해주세요."),
+
+    PATCH_SEARCH_RECORD_NO_IDX(false, 2114, "검색 기록 Idx를 입력해주세요."),
     /**
      * 3000 : Response 오류
      */
