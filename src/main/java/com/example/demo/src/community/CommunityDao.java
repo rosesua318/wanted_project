@@ -875,6 +875,10 @@ public class CommunityDao {
             this.jdbcTemplate.update(createTagQuery, createTagParams);
         }
 
+        String createTagQuery = "insert into PostingTag (postingIdx, ctIdx) VALUES(?, 2)";
+        String createTagParams = String.valueOf(postingIdx);
+        this.jdbcTemplate.update(createTagQuery, createTagParams);
+
         return new PostPostingRes(postingIdx);
     }
 
@@ -910,6 +914,10 @@ public class CommunityDao {
             this.jdbcTemplate.update(createTagQuery, createTagParams);
         }
 
+        String createTagQuery = "insert into PostingTag (postingIdx, ctIdx) VALUES(?, 2)";
+        String createTagParams = String.valueOf(postingIdx);
+        this.jdbcTemplate.update(createTagQuery, createTagParams);
+
         return new PutPostingRes(postingIdx);
     }
 
@@ -929,6 +937,10 @@ public class CommunityDao {
             Object[] createTagParams = new Object[]{postingIdx, t};
             this.jdbcTemplate.update(createTagQuery, createTagParams);
         }
+
+        String createTagQuery = "insert into PostingTag (postingIdx, ctIdx) VALUES(?, 2)";
+        String createTagParams = String.valueOf(postingIdx);
+        this.jdbcTemplate.update(createTagQuery, createTagParams);
 
         return new PostPostingRes(postingIdx);
     }
@@ -955,6 +967,10 @@ public class CommunityDao {
             Object[] createTagParams = new Object[]{postingIdx, t};
             this.jdbcTemplate.update(createTagQuery, createTagParams);
         }
+
+        String createTagQuery = "insert into PostingTag (postingIdx, ctIdx) VALUES(?, 2)";
+        String createTagParams = String.valueOf(postingIdx);
+        this.jdbcTemplate.update(createTagQuery, createTagParams);
 
         return new PutPostingRes(postingIdx);
     }
