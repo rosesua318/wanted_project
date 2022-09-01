@@ -116,7 +116,7 @@ public class WantedDao {
                     "JOIN Specialty s ON s.userIdx = u.userIdx " +
                     "JOIN EmploymentCategory ec ON ec.categoryIdx = s.categoryIdx " +
                     "JOIN EmploymentSubCategory es ON es.subcategoryIdx = s.categoryIdx " +
-                    "where u.userIdx=? and r.resumeIdx=?";
+                    "where u.userIdx=? and r.resumeIdx=? LIMIT 1";
             getUserInfoParams = new Object[]{userIdx, resumeIdx};
             userInfo = this.jdbcTemplate.queryForObject(getUserInfoQuery,
                     (rs, rowNum) -> new UserInfo(

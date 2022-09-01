@@ -60,7 +60,7 @@ public class ApplicationDao {
         getApplicationQuery = "select a.applicationIdx, c.companyName, e.employment, date_format(a.createdAt, '%Y.%m.%d') as writeTime, a.state, a.recommend " +
                 "FROM User u JOIN Application a ON u.userIdx = a.userIdx " +
                 "JOIN Employment e ON e.employmentIdx = a.employmentIdx " +
-                "JOIN Company c ON c.companyIdx = e.employmentIdx " +
+                "JOIN Company c ON c.companyIdx = e.companyIdx " +
                 "where u.userIdx=? and a.state != 0";
         getApplicationParams = String.valueOf(userIdx);
         List<Application> applications = this.jdbcTemplate.query(getApplicationQuery,
@@ -117,7 +117,7 @@ public class ApplicationDao {
         getApplicationQuery = "select a.applicationIdx, c.companyName, e.employment, date_format(a.createdAt, '%Y.%m.%d') as writeTime, a.state, a.recommend " +
                 "FROM User u JOIN Application a ON u.userIdx = a.userIdx " +
                 "JOIN Employment e ON e.employmentIdx = a.employmentIdx " +
-                "JOIN Company c ON c.companyIdx = e.employmentIdx " +
+                "JOIN Company c ON c.companyIdx = e.companyIdx " +
                 "where u.userIdx=? and a.state = 0";
         getApplicationParams = String.valueOf(userIdx);
         List<Application> applications = this.jdbcTemplate.query(getApplicationQuery,
@@ -187,7 +187,7 @@ public class ApplicationDao {
         getApplicationQuery = "select a.applicationIdx, c.companyName, e.employment, date_format(a.createdAt, '%Y.%m.%d') as writeTime, a.state, a.recommend " +
                 "FROM User u JOIN Application a ON u.userIdx = a.userIdx " +
                 "JOIN Employment e ON e.employmentIdx = a.employmentIdx " +
-                "JOIN Company c ON c.companyIdx = e.employmentIdx " +
+                "JOIN Company c ON c.companyIdx = e.companyIdx " +
                 "where u.userIdx=? and a.state != 0 and replace(c.companyName, ' ', '') LIKE ?";
         Object[] getApplyParams = new Object[]{userIdx, postSearchApplyReq.getKeyword().replace(" ", "")};
         List<Application> applications = this.jdbcTemplate.query(getApplicationQuery,
@@ -244,7 +244,7 @@ public class ApplicationDao {
         getApplicationQuery = "select a.applicationIdx, c.companyName, e.employment, date_format(a.createdAt, '%Y.%m.%d') as writeTime, a.state, a.recommend " +
                 "FROM User u JOIN Application a ON u.userIdx = a.userIdx " +
                 "JOIN Employment e ON e.employmentIdx = a.employmentIdx " +
-                "JOIN Company c ON c.companyIdx = e.employmentIdx " +
+                "JOIN Company c ON c.companyIdx = e.companyIdx " +
                 "where u.userIdx=? and a.state = 0 and replace(c.companyName, ' ', '') LIKE ?";
         Object[] getApplyParams = new Object[]{userIdx, postSearchApplyReq.getKeyword().replace(" ", "")};
         List<Application> applications = this.jdbcTemplate.query(getApplicationQuery,
