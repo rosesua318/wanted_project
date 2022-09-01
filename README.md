@@ -148,7 +148,7 @@
 #### 3. 소셜로그인 반영(카카오)
 #### 4. 게시글 작성 기능 API 클라이언트 요청으로 request 타입 requestParam에서 requestPart로 변경 (formdata로 request 받을 수 있도록)
 #### 6. 게시글 작성, 수정 API 전체 태그 추가되게 수정 
-#### 7. Employment 
+#### 7. Employment 리팩토링
 
 ## 2022.09.01
 #### 1. 게시글 수정 태그 조회 API 완성
