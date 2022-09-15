@@ -14,4 +14,4 @@ https://drive.google.com/file/d/1lHJ3k5ov-9-arE9H9oljbTLctiZuA-Ad/view?usp=shari
 ![wanted_erd](https://user-images.githubusercontent.com/71651038/190442824-555c8503-95d6-4298-9c27-6f4bf52a84a2.png)
 
 #### [api 시트 링크]
-https://docs.google.com/spreadsheets/d/1v5Sg70EvtN7nqxZzIIu9ie-fEWGvO_P_I9V334SyKzA/edit#gid=1936283626
+https://docs.google.com/spreadsheets/d/1ZKcg2q2JH8GB8feQeYku9wtFdA4s5jEiiK0m5c6g050/edit#gid=1936283626
